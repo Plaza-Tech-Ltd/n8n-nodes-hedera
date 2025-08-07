@@ -149,21 +149,7 @@ export class TokenService implements IHederaService {
 				description: 'Whether the NFT supply is finite or infinite',
 				required: true,
 			},
-			{
-				displayName: 'Supply Key',
-				name: 'supplyKey',
-				type: 'string',
-				displayOptions: {
-					show: {
-						resource: ['token'],
-						tokenOperation: ['createNft'],
-					},
-				},
-				default: '',
-				placeholder: '302e020100300506032b657004220420... (private key)',
-				description:
-					'Private key for minting/burning NFTs. Optional: If not provided, a new key will be generated and returned. Save this key securely! If lost, you cannot mint or burn NFTs.',
-			},
+
 			// Mint NFT properties
 			{
 				displayName: 'Token ID',
@@ -181,21 +167,6 @@ export class TokenService implements IHederaService {
 				required: true,
 			},
 			{
-				displayName: 'Metadata',
-				name: 'metadata',
-				type: 'string',
-				displayOptions: {
-					show: {
-						resource: ['token'],
-						tokenOperation: ['mintNft'],
-					},
-				},
-				default: '',
-				placeholder: '{"name": "My NFT", "description": "A unique NFT"}',
-				description: 'Metadata for the NFT (JSON string or plain text)',
-				required: true,
-			},
-			{
 				displayName: 'Supply Key',
 				name: 'mintSupplyKey',
 				type: 'string',
@@ -210,6 +181,206 @@ export class TokenService implements IHederaService {
 				description: 'Private key required to mint NFTs for this token',
 				required: true,
 			},
+			{
+				displayName: 'Metadata Storage',
+				name: 'metadataStorage',
+				type: 'options',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['mintNft'],
+					},
+				},
+				options: [
+					{
+						name: 'Store Metadata On-Chain',
+						value: 'onchain',
+						description: 'Store metadata directly on Hedera (limited to ~100 bytes)',
+					},
+					{
+						name: 'Reference External Metadata (Recommended)',
+						value: 'external',
+						description: 'Reference metadata from IPFS or web server (unlimited size)',
+					},
+				],
+				default: 'external',
+				description:
+					'How to store your NFT metadata - external storage recommended for rich metadata',
+			},
+			{
+				displayName: 'NFT Name',
+				name: 'nftName',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['mintNft'],
+						metadataStorage: ['onchain'],
+					},
+				},
+				default: '',
+				placeholder: 'Example NFT 001',
+				description: 'The full name of the NFT (HIP-412 required field)',
+				required: true,
+			},
+			{
+				displayName: 'Asset Type',
+				name: 'assetType',
+				type: 'options',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['mintNft'],
+						metadataStorage: ['onchain'],
+					},
+				},
+				options: [
+					{ name: 'Audio (MP3)', value: 'audio/mp3' },
+					{ name: 'Custom', value: 'custom' },
+					{ name: 'Document (PDF)', value: 'application/pdf' },
+					{ name: 'Image (GIF)', value: 'image/gif' },
+					{ name: 'Image (JPEG)', value: 'image/jpeg' },
+					{ name: 'Image (PNG)', value: 'image/png' },
+					{ name: 'Image (SVG)', value: 'image/svg+xml' },
+					{ name: 'Video (MP4)', value: 'video/mp4' },
+				],
+				default: 'image/png',
+				description: 'MIME type of the asset (HIP-412 required field)',
+				required: true,
+			},
+			{
+				displayName: 'Custom MIME Type',
+				name: 'customMimeType',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['mintNft'],
+						metadataStorage: ['onchain'],
+						assetType: ['custom'],
+					},
+				},
+				default: '',
+				placeholder: 'application/json',
+				description: 'Custom MIME type for the asset',
+				required: true,
+			},
+			{
+				displayName: 'Image URI',
+				name: 'imageUri',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['mintNft'],
+						metadataStorage: ['onchain'],
+					},
+				},
+				default: '',
+				placeholder: 'https://myserver.com/image.png or ipfs://QmHash...',
+				description: 'URI pointing to the asset image (HIP-412 required field)',
+				required: true,
+			},
+			{
+				displayName: 'Description',
+				name: 'nftDescription',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['mintNft'],
+						metadataStorage: ['onchain'],
+					},
+				},
+				default: '',
+				placeholder: 'This describes my NFT',
+				description: 'Description of the NFT (HIP-412 optional field)',
+				typeOptions: {
+					rows: 3,
+				},
+			},
+			{
+				displayName: 'Creator',
+				name: 'creator',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['mintNft'],
+						metadataStorage: ['onchain'],
+					},
+				},
+				default: '',
+				placeholder: 'Jane Doe, John Doe',
+				description: 'Creator(s) of the NFT (HIP-412 optional field)',
+			},
+			{
+				displayName: 'Creator DID',
+				name: 'creatorDID',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['mintNft'],
+						metadataStorage: ['onchain'],
+					},
+				},
+				default: '',
+				placeholder:
+					'did:hedera:mainnet:7Prd74ry1Uct87nZqL3ny7aR7Cg46JamVbJgk8azVgUm;hedera:mainnet:fid=0.0.123',
+				description: 'Decentralized identifier for the creator (HIP-412 optional field)',
+			},
+			{
+				displayName: 'External URL',
+				name: 'externalUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['mintNft'],
+						metadataStorage: ['onchain'],
+					},
+				},
+				default: '',
+				placeholder: 'https://nft.com/mycollection/001',
+				description: 'External URL for the NFT (HIP-412 optional field)',
+			},
+			{
+				displayName: 'Attributes',
+				name: 'attributes',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['mintNft'],
+						metadataStorage: ['onchain'],
+					},
+				},
+				default: '',
+				placeholder: '[{"trait_type": "color", "display_type": "color", "value": "rgb(255,0,0)"}]',
+				description: 'NFT attributes as JSON array (HIP-412 optional field)',
+				typeOptions: {
+					rows: 3,
+				},
+			},
+			// External Metadata URI
+			{
+				displayName: 'Metadata URI',
+				name: 'metadataUri',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['mintNft'],
+						metadataStorage: ['external'],
+					},
+				},
+				default: '',
+				placeholder: 'ipfs://QmHash... or https://myserver.com/metadata.json',
+				description: 'URI pointing to your HIP-412 compliant metadata JSON file',
+				required: true,
+			},
+			// Airdrop properties
 			{
 				displayName: 'Token ID',
 				name: 'tokenId',
@@ -285,8 +456,24 @@ export class TokenService implements IHederaService {
 				break;
 			case 'mintNft':
 				params.tokenId = getNodeParameter('mintTokenId', itemIndex);
-				params.metadata = getNodeParameter('metadata', itemIndex);
 				params.supplyKey = getNodeParameter('mintSupplyKey', itemIndex);
+				params.metadataStorage = getNodeParameter('metadataStorage', itemIndex);
+
+				if (params.metadataStorage === 'onchain') {
+					params.nftName = getNodeParameter('nftName', itemIndex);
+					params.assetType = getNodeParameter('assetType', itemIndex);
+					if (params.assetType === 'custom') {
+						params.customMimeType = getNodeParameter('customMimeType', itemIndex);
+					}
+					params.imageUri = getNodeParameter('imageUri', itemIndex);
+					params.nftDescription = getNodeParameter('nftDescription', itemIndex, '');
+					params.creator = getNodeParameter('creator', itemIndex, '');
+					params.creatorDID = getNodeParameter('creatorDID', itemIndex, '');
+					params.externalUrl = getNodeParameter('externalUrl', itemIndex, '');
+					params.attributes = getNodeParameter('attributes', itemIndex, '');
+				} else if (params.metadataStorage === 'external') {
+					params.metadataUri = getNodeParameter('metadataUri', itemIndex);
+				}
 				break;
 			case 'airdrop':
 				params.tokenId = getNodeParameter('tokenId', itemIndex);

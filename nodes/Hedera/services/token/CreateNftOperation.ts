@@ -15,21 +15,9 @@ export class CreateNftOperation implements IBaseOperation {
 		const treasuryAccountId = params.treasuryAccountId as string;
 		const maxSupply = params.maxSupply as number;
 		const supplyType = params.supplyType as string;
-		let supplyKey: PrivateKey;
-		let supplyKeyWasGenerated = false;
 
-		// here user can provide supply key or if not then auto generate a new one
-
-		if (
-			params.supplyKey &&
-			typeof params.supplyKey === 'string' &&
-			params.supplyKey.trim() !== ''
-		) {
-			supplyKey = PrivateKey.fromString(params.supplyKey.trim());
-		} else {
-			supplyKey = PrivateKey.generate();
-			supplyKeyWasGenerated = true;
-		}
+		// always auto-generate supply key
+		const supplyKey = PrivateKey.generate();
 
 		const tokenCreateTx = new TokenCreateTransaction()
 			.setTokenName(tokenName)
@@ -52,18 +40,15 @@ export class CreateNftOperation implements IBaseOperation {
 			throw new Error(`NFT creation failed: ${receipt.status.toString()}`);
 		}
 
-		const result: IOperationResult = {
+		return {
 			tokenId: tokenId.toString(),
 			symbol: tokenSymbol,
 			name: tokenName,
 			maxSupply,
 			supplyType,
-			status: receipt.status.toString() === 'SUCCESS' ? 'SUCCESS' : receipt.status.toString(),
+			supplyKey: supplyKey.toString(),
+			status: receipt.status.toString(),
 			transactionId: transactionId?.toString() || '',
 		};
-		if (supplyKeyWasGenerated) {
-			result.supplyKey = supplyKey.toString();
-		}
-		return result;
 	}
 }
