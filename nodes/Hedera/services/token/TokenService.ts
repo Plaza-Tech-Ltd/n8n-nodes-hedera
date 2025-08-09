@@ -74,7 +74,7 @@ export class TokenService implements IHederaService {
 				required: true,
 			},
 			{
-				displayName: 'Amount (in smallest units)',
+				displayName: 'Amount (In Smallest Units)',
 				name: 'mintAmount',
 				type: 'number',
 				displayOptions: {
@@ -88,7 +88,7 @@ export class TokenService implements IHederaService {
 				},
 				default: 1000,
 				description:
-					"The amount to mint to the treasury in the token's lowest denomination. E.g., for 2 decimals, 100.55 => 10055",
+					"The amount to mint to the treasury in the token's lowest denomination. E.g., for 2 decimals, 100.55 => 10055.",
 				required: true,
 			},
 			{
@@ -168,7 +168,7 @@ export class TokenService implements IHederaService {
 				},
 				default: false,
 				description:
-					'If enabled, sets a supply key on the token to allow future mint/burn. If disabled, supply is fixed forever.',
+					'Whether to enable a supply key on the token to allow future mint/burn. If disabled, supply is fixed forever.',
 			},
 			{
 				displayName: 'Token ID',
