@@ -1,14 +1,14 @@
 import { Client } from '@hashgraph/sdk';
 import { IDataObject, INodeProperties } from 'n8n-workflow';
 import { IHederaService, IOperationResult } from '../../core/types';
-import { CreateFtTokenOperation } from './CreateFtTokenOperation';
+import { CreateFungibleTokenOperation } from './CreateFungibleTokenOperation';
 import { AirdropOperation } from './AirdropOperation';
-import { FtMintOperation } from './FtMintOperation';
+import { FungibleTokenMintOperation } from './FungibleTokenMintOperation';
 
 export class TokenService implements IHederaService {
-	private createTokenOperation = new CreateFtTokenOperation();
+	private createFungibleTokenOperation = new CreateFungibleTokenOperation();
 	private airdropOperation = new AirdropOperation();
-	private mintOperation = new FtMintOperation();
+	private mintOperation = new FungibleTokenMintOperation();
 
 	getProperties(): INodeProperties[] {
 		return [
@@ -55,27 +55,8 @@ export class TokenService implements IHederaService {
 				required: true,
 			},
 			{
-				displayName: 'Supply Key (Private Key)',
-				name: 'supplyKey',
-				type: 'string',
-				typeOptions: {
-					password: true,
-				},
-				displayOptions: {
-					show: {
-						resource: ['token'],
-						tokenOperation: ['mint'],
-					},
-				},
-				default: '',
-				placeholder: '302e020100300506032b657004220420... or 302e020100300506032b657004220420...',
-				description:
-					'The private key that controls token supply (must sign the mint). Stored in the workflow; treat as sensitive.',
-				required: true,
-			},
-			{
-				displayName: 'Amount (In Smallest Units)',
-				name: 'mintAmount',
+				displayName: 'Amount',
+				name: 'amount',
 				type: 'number',
 				displayOptions: {
 					show: {
@@ -86,9 +67,9 @@ export class TokenService implements IHederaService {
 				typeOptions: {
 					minValue: 1,
 				},
-				default: 1000,
+				default: 100,
 				description:
-					"The amount to mint to the treasury in the token's lowest denomination. E.g., for 2 decimals, 100.55 => 10055.",
+					"Whole token amount to mint. The node will automatically convert this to the token's smallest units based on its decimals.",
 				required: true,
 			},
 			{
@@ -240,8 +221,7 @@ export class TokenService implements IHederaService {
 				break;
 			case 'mint':
 				params.tokenId = getNodeParameter('tokenId', itemIndex);
-				params.supplyKey = getNodeParameter('supplyKey', itemIndex);
-				params.mintAmount = getNodeParameter('mintAmount', itemIndex);
+				params.amount = getNodeParameter('amount', itemIndex);
 				break;
 			case 'airdrop':
 				params.tokenId = getNodeParameter('tokenId', itemIndex);
@@ -260,7 +240,7 @@ export class TokenService implements IHederaService {
 	async execute(operation: string, params: IDataObject, client: Client): Promise<IOperationResult> {
 		switch (operation) {
 			case 'create':
-				return this.createTokenOperation.execute(params, client);
+				return this.createFungibleTokenOperation.execute(params, client);
 			case 'mint':
 				return this.mintOperation.execute(params, client);
 			case 'airdrop':
