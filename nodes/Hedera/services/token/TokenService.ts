@@ -3,14 +3,14 @@ import { IDataObject, INodeProperties } from 'n8n-workflow';
 import { IHederaService, IOperationResult } from '../../core/types';
 import { CreateTokenOperation } from './CreateTokenOperation';
 import { AirdropOperation } from './AirdropOperation';
-import { CreateNftOperation } from './CreateNftOperation';
-import { MintNftOperation } from './MintNftOperation';
+import { CreateNonFungibleTokenOperation } from './CreateNonFungibleTokenOperation';
+import { NonFungibleTokenMintOperation } from './NonFungibleTokenMintOperation';
 
 export class TokenService implements IHederaService {
 	private createTokenOperation = new CreateTokenOperation();
 	private airdropOperation = new AirdropOperation();
-	private createNftOperation = new CreateNftOperation();
-	private mintNftOperation = new MintNftOperation();
+	private CreateNonFungibleTokenOperation = new CreateNonFungibleTokenOperation();
+	private NonFungibleTokenMintOperation = new NonFungibleTokenMintOperation();
 
 	getProperties(): INodeProperties[] {
 		return [
@@ -493,9 +493,9 @@ export class TokenService implements IHederaService {
 			case 'create':
 				return this.createTokenOperation.execute(params, client);
 			case 'createNft':
-				return this.createNftOperation.execute(params, client);
+				return this.CreateNonFungibleTokenOperation.execute(params, client);
 			case 'mintNft':
-				return this.mintNftOperation.execute(params, client);
+				return this.NonFungibleTokenMintOperation.execute(params, client);
 			case 'airdrop':
 				return this.airdropOperation.execute(params, client);
 			default:

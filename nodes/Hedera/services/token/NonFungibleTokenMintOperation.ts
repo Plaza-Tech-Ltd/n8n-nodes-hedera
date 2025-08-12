@@ -9,7 +9,7 @@ interface OnchainMetadata {
 	type: string;
 }
 
-export class MintNftOperation implements IBaseOperation {
+export class NonFungibleTokenMintOperation implements IBaseOperation {
 	private readonly MAX_METADATA_SIZE = 100;
 
 	private getOnchainMetadata(params: IDataObject): Buffer {
