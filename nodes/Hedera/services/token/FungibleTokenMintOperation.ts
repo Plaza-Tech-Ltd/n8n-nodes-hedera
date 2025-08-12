@@ -22,15 +22,7 @@ export class FungibleTokenMintOperation implements IBaseOperation {
 			.setAmount(mintedAmount)
 			.freezeWith(client);
 
-		const operator = client.getOperator();
-		if (!operator) {
-			throw new Error(
-				'Mint requires a signature. Client operator is not configured in credentials.',
-			);
-		}
-		const signedTx = await tx.signWith(operator.publicKey, operator.transactionSigner);
-
-		const txResponse = await signedTx.execute(client);
+		const txResponse = await tx.execute(client);
 		const receipt = await txResponse.getReceipt(client);
 
 		return {
