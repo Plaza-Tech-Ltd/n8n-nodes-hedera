@@ -242,7 +242,7 @@ export class TokenService implements IHederaService {
 	async execute(operation: string, params: IDataObject, client: Client): Promise<IOperationResult> {
 		switch (operation) {
 			case 'create':
-				return this.createTokenOperation.execute(params, client);
+				return this.createFungibleTokenOperation.execute(params, client);
 			case 'createNft':
 				return this.CreateNonFungibleTokenOperation.execute(params, client);
 			case 'mintNft':
