@@ -2,7 +2,7 @@ import { TokenMintTransaction, Client, TokenId } from '@hashgraph/sdk';
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
 
-export class NonFungibleTokenMintOperation implements IBaseOperation {
+export class NFTMintOperation implements IBaseOperation {
 	private readonly MAX_METADATA_SIZE = 100;
 
 	private validateRequiredFields(params: IDataObject): void {

@@ -8,7 +8,7 @@ import {
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
 
-export class CreateNonFungibleTokenOperation implements IBaseOperation {
+export class CreateNFTOperation implements IBaseOperation {
 	async execute(params: IDataObject, client: Client): Promise<IOperationResult> {
 		const tokenName = params.tokenName as string;
 		const tokenSymbol = params.tokenSymbol as string;

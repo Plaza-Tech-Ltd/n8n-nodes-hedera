@@ -3,16 +3,16 @@ import { IDataObject, INodeProperties } from 'n8n-workflow';
 import { IHederaService, IOperationResult } from '../../core/types';
 import { AirdropOperation } from './AirdropOperation';
 import { CreateFungibleTokenOperation } from './CreateFungibleTokenOperation';
-import { CreateNonFungibleTokenOperation } from './CreateNonFungibleTokenOperation';
-import { NonFungibleTokenMintOperation } from './NonFungibleTokenMintOperation';
+import { CreateNFTOperation } from './CreateNFTOperation';
+import { NFTMintOperation } from './NFTMintOperation';
 import { FungibleTokenMintOperation } from './FungibleTokenMintOperation';
 
 export class TokenService implements IHederaService {
 	private airdropOperation = new AirdropOperation();
 	private createFungibleTokenOperation = new CreateFungibleTokenOperation();
 	private fungibleTokenMintOperation = new FungibleTokenMintOperation();
-	private createNonFungibleTokenOperation = new CreateNonFungibleTokenOperation();
-	private nonFungibleTokenMintOperation = new NonFungibleTokenMintOperation();
+	private createNFTOperation = new CreateNFTOperation();
+	private NFTMintOperation = new NFTMintOperation();
 
 	getProperties(): INodeProperties[] {
 		return [
@@ -31,26 +31,26 @@ export class TokenService implements IHederaService {
 					},
 					{
 						name: 'Create Fungible Token',
-						value: 'createFT',
+						value: 'createFungibleToken',
 						description: 'Create a new fungible token',
 					},
 					{
-						name: 'Create Non Fungible Token',
+						name: 'Create NFT',
 						value: 'createNFT',
 						description: 'Create a new non-fungible token (NFT)',
 					},
 					{
 						name: 'Mint Fungible Token',
-						value: 'mintFT',
+						value: 'mintFungibleToken',
 						description: 'Mint additional supply for a fungible token',
 					},
 					{
-						name: 'Mint Non Fungible Token',
+						name: 'Mint NFT',
 						value: 'mintNFT',
 						description: 'Mint non-fungible token (NFT)',
 					},
 				],
-				default: 'createFT',
+				default: 'createFungibleToken',
 			},
 			// Token creation properties
 			{
@@ -60,7 +60,7 @@ export class TokenService implements IHederaService {
 				displayOptions: {
 					show: {
 						resource: ['token'],
-						tokenOperation: ['createFT', 'createNFT'],
+						tokenOperation: ['createFungibleToken', 'createNFT'],
 					},
 				},
 				default: '',
@@ -75,7 +75,7 @@ export class TokenService implements IHederaService {
 				displayOptions: {
 					show: {
 						resource: ['token'],
-						tokenOperation: ['createFT', 'createNFT'],
+						tokenOperation: ['createFungibleToken', 'createNFT'],
 					},
 				},
 				default: '',
@@ -91,7 +91,7 @@ export class TokenService implements IHederaService {
 				displayOptions: {
 					show: {
 						resource: ['token'],
-						tokenOperation: ['createFT'],
+						tokenOperation: ['createFungibleToken'],
 					},
 				},
 				typeOptions: {
@@ -126,7 +126,7 @@ export class TokenService implements IHederaService {
 				displayOptions: {
 					show: {
 						resource: ['token'],
-						tokenOperation: ['createFT'],
+						tokenOperation: ['createFungibleToken'],
 					},
 				},
 				default: false,
@@ -179,7 +179,7 @@ export class TokenService implements IHederaService {
 				displayOptions: {
 					show: {
 						resource: ['token'],
-						tokenOperation: ['mintNFT', 'mintFT', 'airdrop'],
+						tokenOperation: ['mintNFT', 'mintFungibleToken', 'airdrop'],
 					},
 				},
 				default: '',
@@ -199,7 +199,7 @@ export class TokenService implements IHederaService {
 				},
 				default: '',
 				placeholder: 'ipfs://QmHash... or https://myserver.com/metadata.json',
-				description: 'URI pointing to your HIP-412 compliant metadata JSON file',
+				description: 'URI pointing to the metadata JSON file',
 				required: true,
 			},
 			// Mint FT properties
@@ -210,7 +210,7 @@ export class TokenService implements IHederaService {
 				displayOptions: {
 					show: {
 						resource: ['token'],
-						tokenOperation: ['mintFT'],
+						tokenOperation: ['mintFungibleToken'],
 					},
 				},
 				typeOptions: {
@@ -266,7 +266,7 @@ export class TokenService implements IHederaService {
 		const params: IDataObject = {};
 
 		switch (operation) {
-			case 'createFT':
+			case 'createFungibleToken':
 				params.tokenName = getNodeParameter('tokenName', itemIndex);
 				params.tokenSymbol = getNodeParameter('tokenSymbol', itemIndex);
 				params.tokenDecimals = getNodeParameter('tokenDecimals', itemIndex);
@@ -287,7 +287,7 @@ export class TokenService implements IHederaService {
 				params.tokenId = getNodeParameter('tokenId', itemIndex);
 				params.metadataUri = getNodeParameter('metadataUri', itemIndex);
 				break;
-			case 'mintFT':
+			case 'mintFungibleToken':
 				params.tokenId = getNodeParameter('tokenId', itemIndex);
 				params.amount = getNodeParameter('amount', itemIndex);
 				break;
@@ -306,14 +306,14 @@ export class TokenService implements IHederaService {
 
 	async execute(operation: string, params: IDataObject, client: Client): Promise<IOperationResult> {
 		switch (operation) {
-			case 'createFT':
+			case 'createFungibleToken':
 				return this.createFungibleTokenOperation.execute(params, client);
 			case 'createNFT':
-				return this.createNonFungibleTokenOperation.execute(params, client);
-			case 'mintFT':
+				return this.createNFTOperation.execute(params, client);
+			case 'mintFungibleToken':
 				return this.fungibleTokenMintOperation.execute(params, client);
 			case 'mintNFT':
-				return this.nonFungibleTokenMintOperation.execute(params, client);
+				return this.NFTMintOperation.execute(params, client);
 			case 'airdrop':
 				return this.airdropOperation.execute(params, client);
 			default:
