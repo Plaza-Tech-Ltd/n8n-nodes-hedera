@@ -3,7 +3,7 @@ import {
 	TokenType,
 	TokenSupplyType,
 	Client,
-	PrivateKey,
+	PublicKey,
 } from '@hashgraph/sdk';
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
@@ -13,11 +13,14 @@ export class CreateNonFungibleTokenOperation implements IBaseOperation {
 		const tokenName = params.tokenName as string;
 		const tokenSymbol = params.tokenSymbol as string;
 		const treasuryAccountId = params.treasuryAccountId as string;
-		const maxSupply = params.maxSupply as number;
 		const supplyType = params.supplyType as string;
+		const maxSupply = params.maxSupply as number | undefined;
 
-		// always auto-generate supply key
-		const supplyKey = PrivateKey.generate();
+		// Use client's operator key as supply key
+		const operatorPublicKey = client.operatorPublicKey as PublicKey | null;
+		if (!operatorPublicKey) {
+			throw new Error('Client operator key is not configured. Please set credentials.');
+		}
 
 		const tokenCreateTx = new TokenCreateTransaction()
 			.setTokenName(tokenName)
@@ -25,14 +28,17 @@ export class CreateNonFungibleTokenOperation implements IBaseOperation {
 			.setTokenType(TokenType.NonFungibleUnique)
 			.setDecimals(0)
 			.setTreasuryAccountId(treasuryAccountId)
-			.setMaxSupply(maxSupply)
 			.setSupplyType(supplyType === 'FINITE' ? TokenSupplyType.Finite : TokenSupplyType.Infinite)
-			.setSupplyKey(supplyKey);
+			.setSupplyKey(operatorPublicKey);
+
+		// Only set maxSupply if supply type is finite and maxSupply is provided
+		if (supplyType === 'FINITE' && maxSupply !== undefined) {
+			tokenCreateTx.setMaxSupply(maxSupply);
+		}
 
 		// Execute transaction
 		const txResponse = await tokenCreateTx.execute(client);
 		const receipt = await txResponse.getReceipt(client);
-
 		const tokenId = receipt.tokenId;
 		const transactionId = txResponse.transactionId;
 
@@ -44,9 +50,9 @@ export class CreateNonFungibleTokenOperation implements IBaseOperation {
 			tokenId: tokenId.toString(),
 			symbol: tokenSymbol,
 			name: tokenName,
-			maxSupply,
+			maxSupply: maxSupply || 'unlimited',
 			supplyType,
-			supplyKey: supplyKey.toString(),
+			supplyKey: operatorPublicKey.toString(),
 			status: receipt.status.toString(),
 			transactionId: transactionId?.toString() || '',
 		};

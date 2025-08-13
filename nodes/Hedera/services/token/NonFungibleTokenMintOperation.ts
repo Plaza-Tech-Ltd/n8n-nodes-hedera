@@ -1,72 +1,17 @@
-import { TokenMintTransaction, Client, PrivateKey } from '@hashgraph/sdk';
+import { TokenMintTransaction, Client, TokenId } from '@hashgraph/sdk';
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
-
-interface OnchainMetadata {
-	format: string;
-	name: string;
-	image: string;
-	type: string;
-}
 
 export class NonFungibleTokenMintOperation implements IBaseOperation {
 	private readonly MAX_METADATA_SIZE = 100;
 
-	private getOnchainMetadata(params: IDataObject): Buffer {
-		const metadata: OnchainMetadata = {
-			format: 'HIP412@2.0.0',
-			name: params.nftName as string,
-			image: params.imageUri as string,
-			type:
-				params.assetType === 'custom'
-					? (params.customMimeType as string)
-					: (params.assetType as string),
-		};
-
-		const buffer = Buffer.from(JSON.stringify(metadata), 'utf8');
-
-		if (buffer.length > this.MAX_METADATA_SIZE) {
-			throw new Error(
-				`On-chain metadata exceeds ${this.MAX_METADATA_SIZE} bytes (${buffer.length} bytes).`,
-			);
-		}
-
-		return buffer;
-	}
-
-	private getExternalMetadata(params: IDataObject): Buffer {
-		const uri = params.metadataUri as string;
-		if (!uri) {
-			throw new Error('metadataUri is required for external metadataStorage.');
-		}
-
-		const buffer = Buffer.from(uri, 'utf8');
-
-		if (buffer.length > this.MAX_METADATA_SIZE) {
-			throw new Error(
-				`Metadata URI exceeds ${this.MAX_METADATA_SIZE} bytes (${buffer.length} bytes).`,
-			);
-		}
-
-		return buffer;
-	}
-
 	private validateRequiredFields(params: IDataObject): void {
-		const storage = params.metadataStorage;
+		if (!params.tokenId) {
+			throw new Error('tokenId is required for minting NFT.');
+		}
 
-		if (storage === 'onchain') {
-			if (!params.nftName || !params.imageUri) {
-				throw new Error('Fields "nftName" and "imageUri" are required for on-chain metadata.');
-			}
-			if (params.assetType === 'custom' && !params.customMimeType) {
-				throw new Error('customMimeType is required when assetType is custom.');
-			}
-		} else if (storage === 'external') {
-			if (!params.metadataUri) {
-				throw new Error('metadataUri is required for external metadataStorage.');
-			}
-		} else {
-			throw new Error(`Invalid metadataStorage: ${storage}`);
+		if (!params.metadataUri) {
+			throw new Error('metadataUri is required for minting NFT.');
 		}
 	}
 
@@ -74,23 +19,23 @@ export class NonFungibleTokenMintOperation implements IBaseOperation {
 		this.validateRequiredFields(params);
 
 		const tokenId = params.tokenId as string;
-		const supplyKey = params.supplyKey as string;
-		const storageType = params.metadataStorage as string;
+		const metadataUri = params.metadataUri as string;
 
-		const supplyPrivateKey = PrivateKey.fromString(supplyKey);
+		// Convert metadata URI to buffer
+		const metadataBuffer = Buffer.from(metadataUri, 'utf8');
 
-		const metadataBuffer =
-			storageType === 'onchain'
-				? this.getOnchainMetadata(params)
-				: this.getExternalMetadata(params);
+		if (metadataBuffer.length > this.MAX_METADATA_SIZE) {
+			throw new Error(
+				`Metadata URI exceeds ${this.MAX_METADATA_SIZE} bytes (${metadataBuffer.length} bytes).`,
+			);
+		}
 
-		const mintTx = await new TokenMintTransaction()
-			.setTokenId(tokenId)
+		const tx = await new TokenMintTransaction()
+			.setTokenId(TokenId.fromString(tokenId))
 			.setMetadata([metadataBuffer])
-			.freezeWith(client)
-			.sign(supplyPrivateKey);
+			.freezeWith(client);
 
-		const txResponse = await mintTx.execute(client);
+		const txResponse = await tx.execute(client);
 		const receipt = await txResponse.getReceipt(client);
 
 		if (receipt.status.toString() !== 'SUCCESS') {
@@ -103,11 +48,10 @@ export class NonFungibleTokenMintOperation implements IBaseOperation {
 			success: true,
 			tokenId,
 			serialNumber,
-			metadata: metadataBuffer.toString('utf8'),
+			metadataUri,
 			metadataSize: metadataBuffer.length,
-			metadataInputType: storageType,
 			status: receipt.status.toString(),
-			transactionId: txResponse.transactionId.toString(),
+			transactionId: txResponse.transactionId?.toString() || '',
 			message: `NFT minted successfully with serial number: ${serialNumber}`,
 		};
 	}
