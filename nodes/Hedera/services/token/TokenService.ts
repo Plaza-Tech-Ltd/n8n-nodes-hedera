@@ -1,12 +1,14 @@
 import { Client } from '@hashgraph/sdk';
 import { IDataObject, INodeProperties } from 'n8n-workflow';
 import { IHederaService, IOperationResult } from '../../core/types';
-import { CreateTokenOperation } from './CreateTokenOperation';
+import { CreateFungibleTokenOperation } from './CreateFungibleTokenOperation';
 import { AirdropOperation } from './AirdropOperation';
+import { FungibleTokenMintOperation } from './FungibleTokenMintOperation';
 
 export class TokenService implements IHederaService {
-	private createTokenOperation = new CreateTokenOperation();
+	private createFungibleTokenOperation = new CreateFungibleTokenOperation();
 	private airdropOperation = new AirdropOperation();
+	private mintOperation = new FungibleTokenMintOperation();
 
 	getProperties(): INodeProperties[] {
 		return [
@@ -24,12 +26,51 @@ export class TokenService implements IHederaService {
 						description: 'Create a new fungible token',
 					},
 					{
+						name: 'Mint Fungible Token',
+						value: 'mint',
+						description: 'Mint additional supply for a fungible token',
+					},
+					{
 						name: 'Airdrop Token',
 						value: 'airdrop',
 						description: 'Airdrop tokens to multiple accounts',
 					},
 				],
 				default: 'create',
+			},
+			// Mint-specific inputs
+			{
+				displayName: 'Token ID',
+				name: 'tokenId',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['mint'],
+					},
+				},
+				default: '',
+				placeholder: '0.0.12345',
+				description: 'The ID of the fungible token to mint',
+				required: true,
+			},
+			{
+				displayName: 'Amount',
+				name: 'amount',
+				type: 'number',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['mint'],
+					},
+				},
+				typeOptions: {
+					minValue: 1,
+				},
+				default: 100,
+				description:
+					"Whole token amount to mint. The node will automatically convert this to the token's smallest units based on its decimals.",
+				required: true,
 			},
 			{
 				displayName: 'Token Name',
@@ -97,6 +138,20 @@ export class TokenService implements IHederaService {
 				required: true,
 			},
 			{
+				displayName: 'Enable Supply Key',
+				name: 'enableSupplyKey',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['create'],
+					},
+				},
+				default: false,
+				description:
+					'Whether to enable a supply key on the token to allow future mint/burn. If disabled, supply is fixed forever.',
+			},
+			{
 				displayName: 'Token ID',
 				name: 'tokenId',
 				type: 'string',
@@ -162,6 +217,11 @@ export class TokenService implements IHederaService {
 				params.initialSupply = getNodeParameter('initialSupply', itemIndex);
 				// Add treasury account ID for token creation
 				params.treasuryAccountId = accountId;
+				params.enableSupplyKey = getNodeParameter('enableSupplyKey', itemIndex);
+				break;
+			case 'mint':
+				params.tokenId = getNodeParameter('tokenId', itemIndex);
+				params.amount = getNodeParameter('amount', itemIndex);
 				break;
 			case 'airdrop':
 				params.tokenId = getNodeParameter('tokenId', itemIndex);
@@ -180,7 +240,9 @@ export class TokenService implements IHederaService {
 	async execute(operation: string, params: IDataObject, client: Client): Promise<IOperationResult> {
 		switch (operation) {
 			case 'create':
-				return this.createTokenOperation.execute(params, client);
+				return this.createFungibleTokenOperation.execute(params, client);
+			case 'mint':
+				return this.mintOperation.execute(params, client);
 			case 'airdrop':
 				return this.airdropOperation.execute(params, client);
 			default:
