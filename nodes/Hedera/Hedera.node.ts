@@ -44,6 +44,7 @@ export class Hedera implements INodeType {
 					{ name: 'Account', value: 'account' },
 					{ name: 'Token', value: 'token' },
 					{ name: 'Mirror Query', value: 'mirror' },
+					{ name: 'Consensus Service (HCS)', value: 'consensus' },
 				],
 				default: 'account',
 				description: 'Resource type to operate on',
@@ -74,7 +75,12 @@ export class Hedera implements INodeType {
 				let result: IDataObject = {};
 
 				// Handle modular operations using services
-				if (resource === 'account' || resource === 'token' || resource === 'mirror') {
+				if (
+					resource === 'account' ||
+					resource === 'token' ||
+					resource === 'mirror' ||
+					resource === 'consensus'
+				) {
 					const service = OperationFactory.getService(resource);
 					// Map resource names to their corresponding operation parameter names
 					const operation = this.getNodeParameter(`${resource}Operation`, i) as string;
