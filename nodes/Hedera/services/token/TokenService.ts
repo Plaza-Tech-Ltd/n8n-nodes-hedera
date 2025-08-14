@@ -171,7 +171,6 @@ export class TokenService implements IHederaService {
 					'The maximum supply of NFTs (e.g., 1 for a single NFT, or higher for a collection)',
 				required: true,
 			},
-			// Simplified NFT Mint properties - Just Token ID and Metadata URI
 			{
 				displayName: 'Token ID',
 				name: 'tokenId',
@@ -202,7 +201,7 @@ export class TokenService implements IHederaService {
 				description: 'URI pointing to the metadata JSON file',
 				required: true,
 			},
-			// Mint FT properties
+			// Mint Fungible Token properties
 			{
 				displayName: 'Amount',
 				name: 'amount',
