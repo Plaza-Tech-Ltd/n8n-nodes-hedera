@@ -31,7 +31,6 @@ export class ConsensusService implements IHederaService {
 				],
 				default: 'createTopic',
 			},
-			// Create Topic Parameters
 			{
 				displayName: 'Topic Memo',
 				name: 'topicMemo',
@@ -46,7 +45,6 @@ export class ConsensusService implements IHederaService {
 				description: 'Optional description for the topic (max 100 characters)',
 				placeholder: 'e.g., IoT Sensor Data Stream',
 			},
-			// Submit Message Parameters
 			{
 				displayName: 'Topic ID',
 				name: 'topicId',
@@ -91,7 +89,7 @@ export class ConsensusService implements IHederaService {
 		switch (operation) {
 			case 'createTopic':
 				params.topicMemo = getNodeParameter('topicMemo', itemIndex) || '';
-				params.payerAccountId = accountId; // Use authenticated account as payer
+				params.payerAccountId = accountId;
 				break;
 			case 'submitMessage':
 				params.topicId = getNodeParameter('topicId', itemIndex);

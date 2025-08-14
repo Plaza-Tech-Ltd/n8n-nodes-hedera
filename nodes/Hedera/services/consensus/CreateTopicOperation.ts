@@ -3,6 +3,7 @@ import {
 	TopicCreateTransaction,
 	TransactionResponse,
 	TransactionReceipt,
+	TransactionRecord,
 } from '@hashgraph/sdk';
 import { IDataObject } from 'n8n-workflow';
 import { IOperationResult } from '../../core/types';
@@ -12,19 +13,16 @@ export class CreateTopicOperation {
 		try {
 			const { topicMemo } = params;
 
-			// Create the topic creation transaction
 			let transaction = new TopicCreateTransaction();
 
-			// Set memo if provided
 			if (topicMemo && typeof topicMemo === 'string' && topicMemo.trim()) {
 				transaction = transaction.setTopicMemo(topicMemo.trim());
 			}
 
-			// Execute the transaction (uses operator key by default)
 			const response: TransactionResponse = await transaction.execute(client);
 
-			// Get the receipt to obtain the topic ID
 			const receipt: TransactionReceipt = await response.getReceipt(client);
+			const record: TransactionRecord = await response.getRecord(client);
 			const topicId = receipt.topicId;
 
 			if (!topicId) {
@@ -39,9 +37,9 @@ export class CreateTopicOperation {
 				data: {
 					topicId: topicId.toString(),
 					transactionId: response.transactionId.toString(),
-					// consensusTimestamp: receipt.consensusTimestamp?.toString(),
+					consensusTimestamp: record.consensusTimestamp?.toString(),
 					topicMemo: topicMemo || '',
-					isPublic: true, // Always public when using operator key only
+					isPublic: true,
 				},
 			};
 		} catch (error) {
