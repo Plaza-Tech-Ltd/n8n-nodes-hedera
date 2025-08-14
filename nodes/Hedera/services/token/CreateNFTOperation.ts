@@ -16,7 +16,6 @@ export class CreateNFTOperation implements IBaseOperation {
 		const supplyType = params.supplyType as string;
 		const maxSupply = params.maxSupply as number | undefined;
 
-		// Use client's operator key as supply key
 		const operatorPublicKey = client.operatorPublicKey as PublicKey | null;
 		if (!operatorPublicKey) {
 			throw new Error('Client operator key is not configured. Please set credentials.');
@@ -31,12 +30,10 @@ export class CreateNFTOperation implements IBaseOperation {
 			.setSupplyType(supplyType === 'FINITE' ? TokenSupplyType.Finite : TokenSupplyType.Infinite)
 			.setSupplyKey(operatorPublicKey);
 
-		// Only set maxSupply if supply type is finite and maxSupply is provided
 		if (supplyType === 'FINITE' && maxSupply !== undefined) {
 			tokenCreateTx.setMaxSupply(maxSupply);
 		}
 
-		// Execute transaction
 		const txResponse = await tokenCreateTx.execute(client);
 		const receipt = await txResponse.getReceipt(client);
 		const tokenId = receipt.tokenId;
