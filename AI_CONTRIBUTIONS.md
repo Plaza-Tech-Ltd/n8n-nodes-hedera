@@ -43,9 +43,14 @@ Every service MUST implement the `IHederaService` interface:
 
 ```typescript
 export interface IHederaService {
-    getProperties(): INodeProperties[];
-    extractParameters(operation: string, getNodeParameter: Function, itemIndex: number, accountId?: string): IDataObject;
-    execute(operation: string, params: IDataObject, client: Client): Promise<IOperationResult>;
+	getProperties(): INodeProperties[];
+	extractParameters(
+		operation: string,
+		getNodeParameter: Function,
+		itemIndex: number,
+		accountId?: string,
+	): IDataObject;
+	execute(operation: string, params: IDataObject, client: Client): Promise<IOperationResult>;
 }
 ```
 
@@ -99,67 +104,76 @@ import { IHederaService, IOperationResult } from '../../core/types';
 import { YourFirstOperation } from './YourFirstOperation';
 
 export class YourResourceService implements IHederaService {
-    private yourFirstOperation = new YourFirstOperation();
+	private yourFirstOperation = new YourFirstOperation();
 
-    getProperties(): INodeProperties[] {
-        return [
-            {
-                displayName: 'Operation',
-                name: 'yourresourceOperation',
-                type: 'options',
-                displayOptions: {
-                    show: { resource: ['yourresource'] },
-                },
-                options: [
-                    { name: 'Your First Action', value: 'firstaction', description: 'Description of first action' },
-                    // Add more operations here
-                ],
-                default: 'firstaction',
-            },
-            // Define operation-specific parameters here
-            {
-                displayName: 'Parameter Name',
-                name: 'parameterName',
-                type: 'string',
-                displayOptions: {
-                    show: {
-                        resource: ['yourresource'],
-                        yourresourceOperation: ['firstaction'],
-                    },
-                },
-                default: '',
-                description: 'Description of this parameter',
-                required: true,
-            },
-        ];
-    }
+	getProperties(): INodeProperties[] {
+		return [
+			{
+				displayName: 'Operation',
+				name: 'yourresourceOperation',
+				type: 'options',
+				displayOptions: {
+					show: { resource: ['yourresource'] },
+				},
+				options: [
+					{
+						name: 'Your First Action',
+						value: 'firstaction',
+						description: 'Description of first action',
+					},
+					// Add more operations here
+				],
+				default: 'firstaction',
+			},
+			// Define operation-specific parameters here
+			{
+				displayName: 'Parameter Name',
+				name: 'parameterName',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['yourresource'],
+						yourresourceOperation: ['firstaction'],
+					},
+				},
+				default: '',
+				description: 'Description of this parameter',
+				required: true,
+			},
+		];
+	}
 
-    extractParameters(operation: string, getNodeParameter: Function, itemIndex: number, accountId?: string): IDataObject {
-        const params: IDataObject = {};
-        
-        switch (operation) {
-            case 'firstaction':
-                params.parameterName = getNodeParameter('parameterName', itemIndex);
-                // Add accountId if needed for this operation
-                if (accountId) {
-                    params.senderAccountId = accountId; // or treasuryAccountId, etc.
-                }
-                break;
-            default:
-                throw new Error(`Unsupported yourresource operation: ${operation}`);
-        }
-        
-        return params;
-    }
+	extractParameters(
+		operation: string,
+		getNodeParameter: Function,
+		itemIndex: number,
+		accountId?: string,
+	): IDataObject {
+		const params: IDataObject = {};
 
-    async execute(operation: string, params: IDataObject, client: Client): Promise<IOperationResult> {
-        switch (operation) {
-            case 'firstaction':
-                return this.yourFirstOperation.execute(params, client);
-            default:
-                throw new Error(`Unsupported yourresource operation: ${operation}`);
-        }
-    }
+		switch (operation) {
+			case 'firstaction':
+				params.parameterName = getNodeParameter('parameterName', itemIndex);
+				// Add accountId if needed for this operation
+				if (accountId) {
+					params.senderAccountId = accountId; // or treasuryAccountId, etc.
+				}
+				break;
+			default:
+				throw new Error(`Unsupported yourresource operation: ${operation}`);
+		}
+
+		return params;
+	}
+
+	async execute(operation: string, params: IDataObject, client: Client): Promise<IOperationResult> {
+		switch (operation) {
+			case 'firstaction':
+				return this.yourFirstOperation.execute(params, client);
+			default:
+				throw new Error(`Unsupported yourresource operation: ${operation}`);
+		}
+	}
 }
 ```
 
@@ -173,22 +187,22 @@ import { IDataObject } from 'n8n-workflow';
 import { IOperationResult } from '../../core/types';
 
 export class YourFirstOperation {
-    async execute(params: IDataObject, client: Client): Promise<IOperationResult> {
-        try {
-            // Implement your Hedera SDK operation here
-            const result = await someHederaOperation(params, client);
-            
-            return {
-                success: true,
-                data: result,
-            };
-        } catch (error) {
-            return {
-                success: false,
-                error: (error as Error).message,
-            };
-        }
-    }
+	async execute(params: IDataObject, client: Client): Promise<IOperationResult> {
+		try {
+			// Implement your Hedera SDK operation here
+			const result = await someHederaOperation(params, client);
+
+			return {
+				success: true,
+				data: result,
+			};
+		} catch (error) {
+			return {
+				success: false,
+				error: (error as Error).message,
+			};
+		}
+	}
 }
 ```
 
@@ -200,54 +214,58 @@ Update `nodes/Hedera/operations/OperationFactory.ts`:
 import { YourResourceService } from '../services/yourresource/YourResourceService';
 
 export class OperationFactory {
-    private static yourResourceService = new YourResourceService(); // Add this
+	private static yourResourceService = new YourResourceService(); // Add this
 
-    static getService(resource: string): IHederaService {
-        switch (resource) {
-            case 'account':
-                return this.accountService;
-            case 'token':
-                return this.tokenService;
-            case 'mirror':
-                return this.mirrorService;
-            case 'yourresource': // Add this case
-                return this.yourResourceService;
-            default:
-                throw new Error(`Unsupported resource: ${resource}`);
-        }
-    }
+	static getService(resource: string): IHederaService {
+		switch (resource) {
+			case 'account':
+				return this.accountService;
+			case 'token':
+				return this.tokenService;
+			case 'mirror':
+				return this.mirrorService;
+			case 'yourresource': // Add this case
+				return this.yourResourceService;
+			default:
+				throw new Error(`Unsupported resource: ${resource}`);
+		}
+	}
 
-    static getAllProperties(): INodeProperties[] {
-        return [
-            ...this.accountService.getProperties(),
-            ...this.tokenService.getProperties(),
-            ...this.mirrorService.getProperties(),
-            ...this.yourResourceService.getProperties(), // Add this
-        ];
-    }
+	static getAllProperties(): INodeProperties[] {
+		return [
+			...this.accountService.getProperties(),
+			...this.tokenService.getProperties(),
+			...this.mirrorService.getProperties(),
+			...this.yourResourceService.getProperties(), // Add this
+		];
+	}
 }
 ```
 
 ## Design Principles & Best Practices
 
 ### Keep It Simple
+
 - **Target non-technical users**: n8n users are often results-driven, not technically deep
 - **Minimal required parameters**: Only expose essential parameters needed for operations to work
 - **Clear descriptions**: Use plain language in parameter descriptions
 - **Sensible defaults**: Provide reasonable default values where possible
 
 ### Parameter Handling
+
 - **Full encapsulation**: Services handle 100% of parameter extraction, including common parameters
 - **Use accountId parameter**: Pass the authenticated account ID to operations that need it
 - **Validate inputs**: Check required parameters and throw meaningful errors
 
 ### Property Definitions
+
 - **Resource-specific naming**: Use `{resource}Operation` for operation parameter names
 - **Display conditions**: Use `displayOptions.show` to conditionally show parameters
 - **Type safety**: Specify appropriate types (`string`, `number`, `boolean`, etc.)
 - **Required fields**: Mark essential parameters as `required: true`
 
 ### Error Handling
+
 - **Meaningful messages**: Provide clear error descriptions
 - **Graceful failures**: Return structured error objects from operations
 - **Operation validation**: Validate operation names in both parameter extraction and execution
@@ -255,7 +273,7 @@ export class OperationFactory {
 ## Current Resources Available
 
 1. **Account Service**: Create accounts, transfer HBAR
-2. **Token Service**: Create fungible tokens, airdrop tokens  
+2. **Token Service**: Create fungible tokens, airdrop tokens
 3. **Mirror Service**: Query account info, query token info (read-only operations)
 
 ## Testing Your Implementation
@@ -270,15 +288,18 @@ After implementing your service:
 ## Common Patterns
 
 ### Read-only vs Transaction Operations
+
 - **Read-only operations** (Mirror queries): Don't need accountId parameter
 - **Transaction operations**: Usually need accountId for sender/treasury roles
 
 ### Parameter Mapping
+
 - Use descriptive parameter names that match n8n conventions
 - Map internal Hedera SDK parameter names appropriately
 - Consider parameter naming conflicts across services
 
 ### Service Organization
+
 - Group related operations in the same service
 - Keep services focused on a single Hedera resource type
 - Create separate operation classes for complex logic

@@ -1,75 +1,48 @@
 // TopicMessagesQuery.ts
-import { TopicMessageQuery, Client, TopicId } from '@hashgraph/sdk';
+import axios from 'axios';
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
+import { Client } from '@hashgraph/sdk';
+
+function getMirrorNodeUrl(params: IDataObject, client?: Client): string {
+	if (params.mirrorNodeUrl) return params.mirrorNodeUrl as string;
+	if (client) {
+		const network = client.network && Object.keys(client.network)[0];
+		if (network && network.includes('testnet')) return 'https://testnet.mirrornode.hedera.com';
+		if (network && network.includes('mainnet')) return 'https://mainnet.mirrornode.hedera.com';
+		if (network && network.includes('previewnet'))
+			return 'https://previewnet.mirrornode.hedera.com';
+	}
+	return 'https://testnet.mirrornode.hedera.com';
+}
 
 export class TopicMessagesQueryOperation implements IBaseOperation {
-	async execute(params: IDataObject, client: Client): Promise<IOperationResult> {
+	async execute(params: IDataObject, client?: Client): Promise<IOperationResult> {
 		const topicId = params.topicId as string;
 		const limit = (params.limit as number) || 10;
-		const sequenceFrom = params.sequenceFrom as number;
+		const sequenceFrom = params.sequenceFrom as number | undefined;
+		const mirrorNodeUrl = getMirrorNodeUrl(params, client);
 
-		return new Promise((resolve, reject) => {
-			const messages: any[] = [];
-			let messageCount = 0;
+		let url = `${mirrorNodeUrl}/api/v1/topics/${topicId}/messages?limit=${limit}`;
+		if (sequenceFrom) {
+			url += `&sequenceNumber=${sequenceFrom}`;
+		}
 
-			const query = new TopicMessageQuery().setTopicId(TopicId.fromString(topicId)).setLimit(limit);
+		const response = await axios.get(url);
+		const data = response.data;
+		const messages = (data.messages || []).map((msg: any) => ({
+			sequenceNumber: msg.sequence_number?.toString() || '',
+			runningHash: msg.running_hash || '',
+			contents: msg.message ? Buffer.from(msg.message, 'base64').toString('utf8') : '',
+			consensusTimestamp: msg.consensus_timestamp || '',
+		}));
 
-			if (sequenceFrom) {
-				query.setStartTime(0); // Set to beginning of time to use sequence number
-			}
-
-			const subscription = query.subscribe(client, null, (message) => {
-				// If sequenceFrom is specified, filter messages
-				if (sequenceFrom && message.sequenceNumber.toNumber() < sequenceFrom) {
-					return;
-				}
-
-				const messageData = {
-					sequenceNumber: message.sequenceNumber.toString(),
-					runningHash: message.runningHash ? Buffer.from(message.runningHash).toString('hex') : '',
-					contents: message.contents ? Buffer.from(message.contents).toString('utf8') : '',
-					consensusTimestamp: message.consensusTimestamp.toDate().toISOString(),
-					// chunkInfo removed for simplicity
-				};
-
-				messages.push(messageData);
-				messageCount++;
-
-				// If we've reached the limit, unsubscribe and resolve
-				if (messageCount >= limit) {
-					subscription.unsubscribe();
-					resolve({
-						topicId,
-						messages,
-						messageCount,
-						limit,
-						sequenceFrom: sequenceFrom || null,
-					});
-				}
-			});
-
-			// Set a timeout to prevent hanging indefinitely
-			setTimeout(() => {
-				subscription.unsubscribe();
-				resolve({
-					topicId,
-					messages,
-					messageCount,
-					limit,
-					sequenceFrom: sequenceFrom || null,
-					note:
-						messageCount < limit
-							? 'Retrieved all available messages within timeout'
-							: 'Limit reached',
-				});
-			}, 30000); // 30 second timeout
-
-			// Handle subscription errors
-			// subscription.on('error', (error: any) => {
-			// 	subscription.unsubscribe();
-			// 	reject(new Error(`Topic message subscription error: ${error.message}`));
-			// });
-		});
+		return {
+			topicId,
+			messages,
+			messageCount: messages.length,
+			limit,
+			sequenceFrom: sequenceFrom || null,
+		};
 	}
 }
