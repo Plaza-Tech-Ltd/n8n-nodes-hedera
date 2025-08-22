@@ -124,22 +124,7 @@ export class MirrorService implements IHederaService {
 				description: 'The Hedera account ID to get tokens for',
 				required: true,
 			},
-			// Account ID for token balance query
-			{
-				displayName: 'Account ID',
-				name: 'tokenBalanceAccountId',
-				type: 'string',
-				displayOptions: {
-					show: {
-						resource: ['mirror'],
-						mirrorOperation: ['tokenBalance'],
-					},
-				},
-				default: '',
-				placeholder: '0.0.12345',
-				description: 'The Hedera account ID to check token balance for',
-				required: true,
-			},
+
 			// Token ID for token balance query
 			{
 				displayName: 'Token ID',
@@ -229,7 +214,6 @@ export class MirrorService implements IHederaService {
 				params.accountId = getNodeParameter('tokensAccountId', itemIndex);
 				break;
 			case 'tokenBalance':
-				params.accountId = getNodeParameter('tokenBalanceAccountId', itemIndex);
 				params.tokenId = getNodeParameter('tokenBalanceTokenId', itemIndex);
 				break;
 			case 'topicMessages':

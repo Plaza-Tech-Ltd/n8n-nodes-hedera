@@ -29,12 +29,6 @@ export class AccountTokensQueryOperation implements IBaseOperation {
 			}),
 		);
 
-		const fungibleTokens = tokenDetails
-			.filter((token) => token.type === 'FUNGIBLE_COMMON')
-			.map((token) => ({
-				tokenId: token.token_id,
-			}));
-
 		const nfts = tokenDetails
 			.filter((token) => token.type === 'NON_FUNGIBLE_UNIQUE')
 			.map((token) => ({
@@ -43,7 +37,6 @@ export class AccountTokensQueryOperation implements IBaseOperation {
 
 		return {
 			accountId,
-			fungibleTokens,
 			nfts,
 		};
 	}
