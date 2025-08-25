@@ -27,6 +27,7 @@ export class Hedera implements INodeType {
 		defaults: { name: 'Hedera' },
 		inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main],
+		usableAsTool: true,
 		credentials: [
 			{
 				name: 'hederaApi',
