@@ -44,13 +44,13 @@ export class CreateNFTOperation implements IBaseOperation {
 		}
 
 		return {
+			status: receipt.status.toString(),
 			tokenId: tokenId.toString(),
 			symbol: tokenSymbol,
 			name: tokenName,
 			maxSupply: maxSupply || 'unlimited',
 			supplyType,
 			supplyKey: operatorPublicKey.toString(),
-			status: receipt.status.toString(),
 			transactionId: transactionId?.toString() || '',
 		};
 	}

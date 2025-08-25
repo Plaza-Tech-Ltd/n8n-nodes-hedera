@@ -46,6 +46,20 @@ export class ConsensusService implements IHederaService {
 				placeholder: 'e.g., IoT Sensor Data Stream',
 			},
 			{
+				displayName: 'Enable Submit Key',
+				name: 'enableSubmitKey',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						resource: ['consensus'],
+						consensusOperation: ['createTopic'],
+					},
+				},
+				default: false,
+				description:
+					'Whether to set a submit key so only the client can submit messages. If disabled, anyone can submit.',
+			},
+			{
 				displayName: 'Topic ID',
 				name: 'topicId',
 				type: 'string',
@@ -89,6 +103,7 @@ export class ConsensusService implements IHederaService {
 		switch (operation) {
 			case 'createTopic':
 				params.topicMemo = getNodeParameter('topicMemo', itemIndex) || '';
+				params.enableSubmitKey = getNodeParameter('enableSubmitKey', itemIndex) ?? false;
 				params.payerAccountId = accountId;
 				break;
 			case 'submitMessage':

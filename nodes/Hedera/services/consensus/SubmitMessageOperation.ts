@@ -25,12 +25,12 @@ export class SubmitMessageOperation {
 		const messageSize = new TextEncoder().encode(message).length;
 
 		return {
+			status: receipt.status.toString(),
 			topicId,
 			message,
 			messageSize,
 			sequenceNumber: receipt.topicSequenceNumber?.toString() || 'N/A',
 			consensusTimestamp: record.consensusTimestamp?.toString() || 'N/A',
-			status: receipt.status.toString() === 'SUCCESS' ? 'SUCCESS' : receipt.status.toString(),
 			transactionId: response.transactionId?.toString() || '',
 		};
 	}
