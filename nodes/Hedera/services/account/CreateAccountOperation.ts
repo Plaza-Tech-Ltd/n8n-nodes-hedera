@@ -20,6 +20,7 @@ export class CreateAccountOperation implements IBaseOperation {
 		}
 
 		return {
+			status: receipt.status.toString(),
 			newAccountId: receipt.accountId.toString(),
 			newAccountPublicKey: newPublicKey.toString(),
 			newAccountPrivateKey: newPrivateKey.toString(),

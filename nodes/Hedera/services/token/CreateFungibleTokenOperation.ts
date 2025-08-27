@@ -37,11 +37,11 @@ export class CreateFungibleTokenOperation implements IBaseOperation {
 		}
 
 		return {
+			status: receipt.status.toString(),
 			tokenId: tokenId.toString(),
 			symbol: tokenSymbol,
 			name: tokenName,
 			decimals: tokenDecimals,
-			status: receipt.status.toString() === 'SUCCESS' ? 'SUCCESS' : receipt.status.toString(),
 			transactionId: transactionId?.toString() || '',
 		};
 	}

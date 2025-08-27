@@ -10,17 +10,17 @@ export class AirdropOperation implements IBaseOperation {
 		const senderAccountId = params.senderAccountId as string;
 
 		const airdropTx = new TokenAirdropTransaction()
-			.addTokenTransfer(tokenId, senderAccountId, -airdropAmount)    // sender (negative)
+			.addTokenTransfer(tokenId, senderAccountId, -airdropAmount) // sender (negative)
 			.addTokenTransfer(tokenId, recipientAccountId, airdropAmount); // recipient (positive)
 
 		const txResponse = await airdropTx.execute(client);
 		const receipt = await txResponse.getReceipt(client);
 
 		return {
+			status: receipt.status.toString(),
 			tokenId: tokenId,
 			recipientAccountId: recipientAccountId,
 			amount: airdropAmount,
-			status: receipt.status.toString() === 'SUCCESS' ? 'SUCCESS' : receipt.status.toString(),
 			transactionId: txResponse.transactionId?.toString() || '',
 		};
 	}

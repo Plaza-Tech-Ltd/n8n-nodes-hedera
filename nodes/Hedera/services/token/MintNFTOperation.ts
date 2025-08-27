@@ -20,10 +20,10 @@ export class MintNFTOperation implements IBaseOperation {
 		const serialNumber = receipt.serials?.[0]?.toString() ?? 'Unknown';
 
 		return {
+			status: receipt.status.toString(),
 			tokenId,
 			metadataUri,
 			serialNumber,
-			status: receipt.status.toString() === 'SUCCESS' ? 'SUCCESS' : receipt.status.toString(),
 			transactionId: txResponse.transactionId?.toString() || '',
 		};
 	}
