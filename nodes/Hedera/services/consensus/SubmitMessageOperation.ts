@@ -27,7 +27,6 @@ export class SubmitMessageOperation implements IBaseOperation {
 		const receipt: TransactionReceipt = await response.getReceipt(client);
 		const record: TransactionRecord = await response.getRecord(client);
 
-		// Check if the transaction was successful
 		if (!receipt.topicSequenceNumber) {
 			throw new Error(`Message submission failed: ${receipt.status.toString()}`);
 		}
