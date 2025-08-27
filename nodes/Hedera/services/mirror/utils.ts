@@ -1,12 +1,16 @@
-import { Client } from '@hashgraph/sdk';
+import { Client, LedgerId } from '@hashgraph/sdk';
 
 export function getMirrorNodeUrl(client?: Client): string {
-	if (!client || !client.network) {
-		throw new Error('Hedera client network is not configured');
-	}
+	if (!client?.ledgerId) throw new Error('No Ledger Id set');
 
-	const networkName = Object.keys(client.network)[0] || '';
-	return networkName.includes('mainnet')
-		? 'https://mainnet.mirrornode.hedera.com'
-		: 'https://testnet.mirrornode.hedera.com';
+	switch (client.ledgerId) {
+		case LedgerId.TESTNET:
+			return 'https://testnet.mirrornode.hedera.com';
+		case LedgerId.PREVIEWNET:
+			return 'https://previewnet.mirrornode.hedera.com';
+		case LedgerId.MAINNET:
+			return 'https://mainnet.mirrornode.hedera.com';
+		default:
+			throw new Error('Invalid Ledger ID');
+	}
 }

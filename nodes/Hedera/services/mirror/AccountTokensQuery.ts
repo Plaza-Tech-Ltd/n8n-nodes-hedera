@@ -23,14 +23,12 @@ export class AccountTokensQueryOperation implements IBaseOperation {
 			}),
 		);
 
-		const nfts = tokenDetails
-			.filter((token) => token.type === 'NON_FUNGIBLE_UNIQUE')
-			.map((token) => ({
-				tokenId: token.token_id,
-			}));
+		const fungibleTokens = tokenDetails.filter((token) => token.type === 'FUNGIBLE_COMMON');
+		const nfts = tokenDetails.filter((token) => token.type === 'NON_FUNGIBLE_UNIQUE');
 
 		return {
 			accountId,
+			fungibleTokens,
 			nfts,
 		};
 	}

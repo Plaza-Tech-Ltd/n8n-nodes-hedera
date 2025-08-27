@@ -13,12 +13,9 @@ export class AccountInfoQueryOperation implements IBaseOperation {
 		const { data } = await axios.get(url);
 
 		return {
-			accountId: data.account || '',
-			balance: data.balance?.balance?.toString() || '0',
-			memo: data.memo || '',
-			expirationTime: data.expiry_timestamp
-				? new Date(Number(data.expiry_timestamp) * 1000).toISOString()
-				: '',
+			success: true,
+			data: data,
+			accountId: accountId,
 		};
 	}
 }
