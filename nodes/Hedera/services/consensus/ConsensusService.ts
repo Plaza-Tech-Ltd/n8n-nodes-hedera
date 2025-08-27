@@ -89,21 +89,6 @@ export class ConsensusService implements IHederaService {
 				placeholder: 'Your message content here...',
 				required: true,
 			},
-			{
-				displayName: 'Submit Key (Optional)',
-				name: 'submitKey',
-				type: 'string',
-				displayOptions: {
-					show: {
-						resource: ['consensus'],
-						consensusOperation: ['submitMessage'],
-					},
-				},
-				default: '',
-				description:
-					'Private key for submitting to topics with submit key restrictions. Leave empty to use client operator key.',
-				placeholder: 'e.g., 302e020100300506032b65700422042...',
-			},
 		];
 	}
 
@@ -124,7 +109,6 @@ export class ConsensusService implements IHederaService {
 			case 'submitMessage':
 				params.topicId = getNodeParameter('topicId', itemIndex);
 				params.message = getNodeParameter('message', itemIndex);
-				params.submitKey = getNodeParameter('submitKey', itemIndex) || '';
 				break;
 			default:
 				throw new Error(`Unsupported consensus operation: ${operation}`);
