@@ -40,6 +40,11 @@ export class MirrorService implements IHederaService {
 						description: 'Get account information from mirror node',
 					},
 					{
+						name: 'Get Account NFTs',
+						value: 'accountNFTs',
+						description: 'Get all NFTs held by an account',
+					},
+					{
 						name: 'Get Account Tokens',
 						value: 'accountTokens',
 						description: 'Get all tokens held by an account',
@@ -58,11 +63,6 @@ export class MirrorService implements IHederaService {
 						name: 'Get Topic Messages',
 						value: 'topicMessages',
 						description: 'Get messages from a consensus topic',
-					},
-					{
-						name: 'Get Account NFTs',
-						value: 'accountNFTs',
-						description: 'Get all NFTs held by an account',
 					},
 				],
 				default: 'accountInfo',

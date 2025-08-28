@@ -12,8 +12,6 @@ export class AccountInfoQueryOperation implements IBaseOperation {
 
 		const { data } = await axios.get(url);
 
-		return {
-			data: data,
-		};
+		return data;
 	}
 }
