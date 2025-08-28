@@ -26,9 +26,9 @@ export class MintFungibleTokenOperation implements IBaseOperation {
 		const receipt = await txResponse.getReceipt(client);
 
 		return {
+			status: receipt.status.toString(),
 			tokenId,
 			amount,
-			status: receipt.status.toString() === 'SUCCESS' ? 'SUCCESS' : receipt.status.toString(),
 			transactionId: txResponse.transactionId?.toString() || '',
 		};
 	}
