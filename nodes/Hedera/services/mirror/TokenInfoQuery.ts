@@ -13,9 +13,7 @@ export class TokenInfoQueryOperation implements IBaseOperation {
 		const { data } = await axios.get(url);
 
 		return {
-			success: true,
 			data: data,
-			tokenId: tokenId,
 		};
 	}
 }

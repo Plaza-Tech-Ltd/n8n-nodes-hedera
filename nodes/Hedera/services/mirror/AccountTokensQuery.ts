@@ -12,24 +12,7 @@ export class AccountTokensQueryOperation implements IBaseOperation {
 		const { data } = await axios.get(
 			`${mirrorNodeUrl}/api/v1/accounts/${accountId}/tokens?limit=100`,
 		);
-		const tokens = data.tokens || [];
 
-		const tokenDetails = await Promise.all(
-			tokens.map(async (token: any) => {
-				const { data: tokenInfo } = await axios.get(
-					`${mirrorNodeUrl}/api/v1/tokens/${token.token_id}`,
-				);
-				return { ...token, type: tokenInfo.type };
-			}),
-		);
-
-		const fungibleTokens = tokenDetails.filter((token) => token.type === 'FUNGIBLE_COMMON');
-		const nfts = tokenDetails.filter((token) => token.type === 'NON_FUNGIBLE_UNIQUE');
-
-		return {
-			accountId,
-			fungibleTokens,
-			nfts,
-		};
+		return data;
 	}
 }
