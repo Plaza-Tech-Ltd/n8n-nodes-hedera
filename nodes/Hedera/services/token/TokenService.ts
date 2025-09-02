@@ -4,15 +4,15 @@ import { IHederaService, IOperationResult } from '../../core/types';
 import { AirdropOperation } from './AirdropOperation';
 import { CreateFungibleTokenOperation } from './CreateFungibleTokenOperation';
 import { CreateNFTOperation } from './CreateNFTOperation';
-import { NFTMintOperation } from './NFTMintOperation';
-import { FungibleTokenMintOperation } from './FungibleTokenMintOperation';
+import { MintNFTOperation } from './MintNFTOperation';
+import { MintFungibleTokenOperation } from './MintFungibleTokenOperation';
 
 export class TokenService implements IHederaService {
 	private airdropOperation = new AirdropOperation();
 	private createFungibleTokenOperation = new CreateFungibleTokenOperation();
-	private fungibleTokenMintOperation = new FungibleTokenMintOperation();
+	private mintFungibleTokenOperation = new MintFungibleTokenOperation();
 	private createNFTOperation = new CreateNFTOperation();
-	private NFTMintOperation = new NFTMintOperation();
+	private mintNFTOperation = new MintNFTOperation();
 
 	getProperties(): INodeProperties[] {
 		return [
@@ -109,7 +109,7 @@ export class TokenService implements IHederaService {
 				displayOptions: {
 					show: {
 						resource: ['token'],
-						tokenOperation: ['createFT'],
+						tokenOperation: ['createFungibleToken'],
 					},
 				},
 				typeOptions: {
@@ -310,9 +310,9 @@ export class TokenService implements IHederaService {
 			case 'createNFT':
 				return this.createNFTOperation.execute(params, client);
 			case 'mintFungibleToken':
-				return this.fungibleTokenMintOperation.execute(params, client);
+				return this.mintFungibleTokenOperation.execute(params, client);
 			case 'mintNFT':
-				return this.NFTMintOperation.execute(params, client);
+				return this.mintNFTOperation.execute(params, client);
 			case 'airdrop':
 				return this.airdropOperation.execute(params, client);
 			default:

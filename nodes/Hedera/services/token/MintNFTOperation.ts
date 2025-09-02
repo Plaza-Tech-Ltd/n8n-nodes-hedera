@@ -2,7 +2,7 @@ import { TokenMintTransaction, Client, TokenId } from '@hashgraph/sdk';
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
 
-export class NFTMintOperation implements IBaseOperation {
+export class MintNFTOperation implements IBaseOperation {
 	async execute(params: IDataObject, client: Client): Promise<IOperationResult> {
 		const tokenId = params.tokenId as string;
 		const metadataUri = params.metadataUri as string;
@@ -20,10 +20,10 @@ export class NFTMintOperation implements IBaseOperation {
 		const serialNumber = receipt.serials?.[0]?.toString() ?? 'Unknown';
 
 		return {
+			status: receipt.status.toString(),
 			tokenId,
 			metadataUri,
 			serialNumber,
-			status: receipt.status.toString() === 'SUCCESS' ? 'SUCCESS' : receipt.status.toString(),
 			transactionId: txResponse.transactionId?.toString() || '',
 		};
 	}
