@@ -4,13 +4,14 @@ import { IBaseOperation, IOperationResult } from '../../core/types';
 import { Client } from '@hashgraph/sdk';
 import { getMirrorNodeUrl } from './utils';
 
-export class AccountInfoQueryOperation implements IBaseOperation {
+export class AccountNFTsQueryOperation implements IBaseOperation {
 	async execute(params: IDataObject, client?: Client): Promise<IOperationResult> {
 		const accountId = String(params.accountId);
 		const mirrorNodeUrl = getMirrorNodeUrl(client);
-		const url = `${mirrorNodeUrl}/api/v1/accounts/${accountId}`;
 
-		const { data } = await axios.get(url);
+		const { data } = await axios.get(
+			`${mirrorNodeUrl}/api/v1/accounts/${accountId}/nfts?limit=100`,
+		);
 
 		return data;
 	}

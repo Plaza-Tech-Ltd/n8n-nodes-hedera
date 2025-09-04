@@ -52,6 +52,7 @@
 		"n8n-workflow": "*"
 	},
 	"dependencies": {
-		"@hashgraph/sdk": "^2.64.5"
+		"@hashgraph/sdk": "^2.64.5",
+		"axios": "^1.11.0"
 	}
 }
