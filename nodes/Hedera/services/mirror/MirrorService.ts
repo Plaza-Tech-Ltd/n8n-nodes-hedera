@@ -8,6 +8,7 @@ import { AccountBalanceQueryOperation } from './AccountBalanceQuery';
 import { AccountTokensQueryOperation } from './AccountTokensQuery';
 import { TokenBalanceQueryOperation } from './TokenBalanceQuery';
 import { TopicMessagesQueryOperation } from './TopicMessagesQuery';
+import { AccountNFTsQueryOperation } from './AccountNFTsQuery';
 
 export class MirrorService implements IHederaService {
 	private accountInfoQuery = new AccountInfoQueryOperation();
@@ -16,6 +17,7 @@ export class MirrorService implements IHederaService {
 	private accountTokensQuery = new AccountTokensQueryOperation();
 	private tokenBalanceQuery = new TokenBalanceQueryOperation();
 	private topicMessagesQuery = new TopicMessagesQueryOperation();
+	private accountNFTsQuery = new AccountNFTsQueryOperation();
 
 	getProperties(): INodeProperties[] {
 		return [
@@ -36,6 +38,11 @@ export class MirrorService implements IHederaService {
 						name: 'Get Account Info',
 						value: 'accountInfo',
 						description: 'Get account information from mirror node',
+					},
+					{
+						name: 'Get Account NFTs',
+						value: 'accountNFTs',
+						description: 'Get all NFTs held by an account',
 					},
 					{
 						name: 'Get Account Tokens',
@@ -188,6 +195,22 @@ export class MirrorService implements IHederaService {
 				default: '',
 				description: 'Get messages starting from this sequence number (optional)',
 			},
+			// Account ID for NFTs query
+			{
+				displayName: 'Account ID',
+				name: 'nftsAccountId',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['mirror'],
+						mirrorOperation: ['accountNFTs'],
+					},
+				},
+				default: '',
+				placeholder: '0.0.12345',
+				description: 'The Hedera account ID to get NFTs for',
+				required: true,
+			},
 		];
 	}
 
@@ -224,6 +247,9 @@ export class MirrorService implements IHederaService {
 					params.sequenceFrom = sequenceFrom;
 				}
 				break;
+			case 'accountNFTs':
+				params.accountId = getNodeParameter('nftsAccountId', itemIndex);
+				break;
 			default:
 				throw new Error(`Unsupported mirror operation: ${operation}`);
 		}
@@ -245,6 +271,8 @@ export class MirrorService implements IHederaService {
 				return this.tokenBalanceQuery.execute(params, client);
 			case 'topicMessages':
 				return this.topicMessagesQuery.execute(params, client);
+			case 'accountNFTs':
+				return this.accountNFTsQuery.execute(params, client);
 			default:
 				throw new Error(`Unsupported mirror operation: ${operation}`);
 		}
