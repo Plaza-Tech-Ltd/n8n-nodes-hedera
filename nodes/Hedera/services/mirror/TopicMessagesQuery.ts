@@ -2,17 +2,19 @@ import { IDataObject } from 'n8n-workflow';
 import { PathResponse } from '../../core/mirror-types';
 import { BaseMirrorOperation } from './BaseMirrorOperation';
 
-export interface TopicMessage {
+export interface TopicMessage extends IDataObject {
 	sequenceNumber: string;
 	contents: string;
 	consensusTimestamp: string;
+	[key: string]: any;
 }
 
-export interface TopicMessagesResult {
+export interface TopicMessagesResult extends IDataObject {
 	topicId: string;
 	messages: TopicMessage[];
 	messageCount: number;
 	limit: number;
+	[key: string]: any;
 }
 
 export class TopicMessagesQueryOperation extends BaseMirrorOperation<

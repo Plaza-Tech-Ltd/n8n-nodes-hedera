@@ -1,11 +1,13 @@
+// AccountBalanceQuery.ts
 import { IDataObject } from 'n8n-workflow';
 import { PathResponse } from '../../core/mirror-types';
 import { BaseMirrorOperation } from './BaseMirrorOperation';
 import { Hbar, HbarUnit } from '@hashgraph/sdk';
 
-export interface AccountBalanceResult {
+export interface AccountBalanceResult extends IDataObject {
 	accountId: string;
 	hbarBalance: string;
+	[key: string]: any;
 }
 
 export class AccountBalanceQueryOperation extends BaseMirrorOperation<
