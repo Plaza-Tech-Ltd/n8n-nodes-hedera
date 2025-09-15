@@ -1,22 +1,31 @@
-import axios from 'axios';
 import { IDataObject } from 'n8n-workflow';
-import { IBaseOperation, IOperationResult } from '../../core/types';
-import { Client, Hbar, HbarUnit } from '@hashgraph/sdk';
-import { getMirrorNodeUrl } from './utils';
+import { PathResponse } from '../../core/mirror-types';
+import { BaseMirrorOperation } from './BaseMirrorOperation';
+import { Hbar, HbarUnit } from '@hashgraph/sdk';
 
-export class AccountBalanceQueryOperation implements IBaseOperation {
-	async execute(params: IDataObject, client?: Client): Promise<IOperationResult> {
-		const accountId = String(params.accountId);
-		const mirrorNodeUrl = getMirrorNodeUrl(client);
-		const url = `${mirrorNodeUrl}/api/v1/accounts/${accountId}`;
+export interface AccountBalanceResult {
+	accountId: string;
+	hbarBalance: string;
+}
 
-		const { data } = await axios.get(url);
-		const hbarBalanceTinybars = data.balance?.balance?.toString() || '0';
-		const hbarBalance = Hbar.fromTinybars(hbarBalanceTinybars).to(HbarUnit.Hbar).toString();
+export class AccountBalanceQueryOperation extends BaseMirrorOperation<
+	'/api/v1/accounts/{idOrAliasOrEvmAddress}',
+	AccountBalanceResult
+> {
+	constructor() {
+		super(
+			(params: IDataObject) => `/api/v1/accounts/${String(params.accountId)}`,
+			(
+				data: PathResponse<'/api/v1/accounts/{idOrAliasOrEvmAddress}'>,
+				params: IDataObject,
+			): AccountBalanceResult => {
+				const accountId = String(params.accountId);
+				const hbarBalance = Hbar.fromTinybars(data.balance?.balance ?? 0)
+					.to(HbarUnit.Hbar)
+					.toString();
 
-		return {
-			accountId,
-			hbarBalance,
-		};
+				return { accountId, hbarBalance };
+			},
+		);
 	}
 }

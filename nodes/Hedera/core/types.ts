@@ -7,10 +7,10 @@ export interface IHederaCredentials {
 	network: 'mainnet' | 'testnet' | 'previewnet';
 }
 
-export interface IOperationResult extends IDataObject {}
+export type IOperationResult<T = IDataObject> = T;
 
-export interface IBaseOperation {
-	execute(params: IDataObject, client: Client): Promise<IOperationResult>;
+export interface IBaseOperation<T = IDataObject> {
+	execute(params: IDataObject, client: Client): Promise<IOperationResult<T>>;
 }
 
 export interface IHederaService {

@@ -1,18 +1,12 @@
-import axios from 'axios';
 import { IDataObject } from 'n8n-workflow';
-import { IBaseOperation, IOperationResult } from '../../core/types';
-import { Client } from '@hashgraph/sdk';
-import { getMirrorNodeUrl } from './utils';
+import { PathResponse } from '../../core/mirror-types';
+import { BaseMirrorOperation } from './BaseMirrorOperation';
 
-export class AccountNFTsQueryOperation implements IBaseOperation {
-	async execute(params: IDataObject, client?: Client): Promise<IOperationResult> {
-		const accountId = String(params.accountId);
-		const mirrorNodeUrl = getMirrorNodeUrl(client);
-
-		const { data } = await axios.get(
-			`${mirrorNodeUrl}/api/v1/accounts/${accountId}/nfts?limit=100`,
-		);
-
-		return data;
+export class AccountNFTsQueryOperation extends BaseMirrorOperation<
+	'/api/v1/accounts/{idOrAliasOrEvmAddress}/nfts',
+	PathResponse<'/api/v1/accounts/{idOrAliasOrEvmAddress}/nfts'>
+> {
+	constructor() {
+		super((params: IDataObject) => `/api/v1/accounts/${String(params.accountId)}/nfts?limit=100`);
 	}
 }
