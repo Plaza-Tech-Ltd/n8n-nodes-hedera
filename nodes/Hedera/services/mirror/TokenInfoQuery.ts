@@ -1,17 +1,12 @@
-import axios from 'axios';
 import { IDataObject } from 'n8n-workflow';
-import { IBaseOperation, IOperationResult } from '../../core/types';
-import { Client } from '@hashgraph/sdk';
-import { getMirrorNodeUrl } from './utils';
+import { PathResponse } from '../../core/mirror-types';
+import { BaseMirrorOperation } from './BaseMirrorOperation';
 
-export class TokenInfoQueryOperation implements IBaseOperation {
-	async execute(params: IDataObject, client?: Client): Promise<IOperationResult> {
-		const tokenId = String(params.tokenId);
-		const mirrorNodeUrl = getMirrorNodeUrl(client);
-		const url = `${mirrorNodeUrl}/api/v1/tokens/${tokenId}`;
-
-		const { data } = await axios.get(url);
-
-		return data;
+export class TokenInfoQueryOperation extends BaseMirrorOperation<
+	'/api/v1/tokens/{tokenId}',
+	PathResponse<'/api/v1/tokens/{tokenId}'>
+> {
+	constructor() {
+		super((params: IDataObject) => `/api/v1/tokens/${String(params.tokenId)}`);
 	}
 }
