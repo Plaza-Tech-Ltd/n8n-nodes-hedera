@@ -25,7 +25,8 @@
 		"format": "prettier nodes credentials --write",
 		"lint": "eslint nodes credentials package.json",
 		"lintfix": "eslint nodes credentials package.json --fix",
-		"prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes credentials package.json"
+		"prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes credentials package.json",
+		"generate:hedera-types": "npx openapi-typescript https://mainnet-public.mirrornode.hedera.com/api/v1/docs/openapi.yml -o nodes/Hedera/core/hedera-mirror.ts"
 	},
 	"files": [
 		"dist",
@@ -45,6 +46,7 @@
 		"eslint": "^8.57.0",
 		"eslint-plugin-n8n-nodes-base": "^1.16.3",
 		"gulp": "^5.0.0",
+		"openapi-typescript": "^7.9.1",
 		"prettier": "^3.5.3",
 		"typescript": "^5.8.2"
 	},
@@ -53,6 +55,6 @@
 	},
 	"dependencies": {
 		"@hashgraph/sdk": "^2.64.5",
-		"axios": "^1.11.0"
+		"openapi-fetch": "^0.14.0"
 	}
 }

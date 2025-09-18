@@ -1,16 +1,27 @@
-import axios from 'axios';
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
 import { Client } from '@hashgraph/sdk';
-import { getMirrorNodeUrl } from './utils';
+import { getMirrorConfigFromClient } from './MirrorConfig';
 
 export class TokenBalanceQueryOperation implements IBaseOperation {
 	async execute(params: IDataObject, client?: Client): Promise<IOperationResult> {
 		const tokenId = String(params.tokenId);
-		const mirrorNodeUrl = getMirrorNodeUrl(client);
-		const url = `${mirrorNodeUrl}/api/v1/tokens/${tokenId}/balances?order=desc`;
+		const { client: mirrorClient } = getMirrorConfigFromClient(client);
 
-		const { data } = await axios.get(url);
+		const { data, error } = await mirrorClient.GET('/api/v1/tokens/{tokenId}/balances', {
+			params: {
+				path: { tokenId },
+				query: { order: 'desc' },
+			},
+		});
+
+		if (error) {
+			throw new Error(`Mirror node error: ${JSON.stringify(error)}`);
+		}
+
+		if (!data) {
+			throw new Error('No data returned from mirror node');
+		}
 
 		return data;
 	}
