@@ -1,14 +1,14 @@
 import { Client } from '@hashgraph/sdk';
 import { IDataObject, INodeProperties } from 'n8n-workflow';
 import { IHederaService, IOperationResult } from '../../core/types';
-import { AirdropOperation } from './AirdropOperation';
+import { TransferFungibleTokenOperation } from './TransferFungibleTokenOperation';
 import { CreateFungibleTokenOperation } from './CreateFungibleTokenOperation';
 import { CreateNFTOperation } from './CreateNFTOperation';
 import { MintNFTOperation } from './MintNFTOperation';
 import { MintFungibleTokenOperation } from './MintFungibleTokenOperation';
 
 export class TokenService implements IHederaService {
-	private airdropOperation = new AirdropOperation();
+	private transferFungibleTokenOperation = new TransferFungibleTokenOperation();
 	private createFungibleTokenOperation = new CreateFungibleTokenOperation();
 	private mintFungibleTokenOperation = new MintFungibleTokenOperation();
 	private createNFTOperation = new CreateNFTOperation();
@@ -24,11 +24,6 @@ export class TokenService implements IHederaService {
 					show: { resource: ['token'] },
 				},
 				options: [
-					{
-						name: 'Airdrop Token',
-						value: 'airdrop',
-						description: 'Airdrop tokens to multiple accounts',
-					},
 					{
 						name: 'Create Fungible Token',
 						value: 'createFungibleToken',
@@ -48,6 +43,11 @@ export class TokenService implements IHederaService {
 						name: 'Mint NFT',
 						value: 'mintNFT',
 						description: 'Mint non-fungible token (NFT)',
+					},
+					{
+						name: 'Transfer Fungible Token',
+						value: 'transferFungibleToken',
+						description: 'Transfer fungible tokens between accounts',
 					},
 				],
 				default: 'createFungibleToken',
@@ -314,7 +314,7 @@ export class TokenService implements IHederaService {
 			case 'mintNFT':
 				return this.mintNFTOperation.execute(params, client);
 			case 'airdrop':
-				return this.airdropOperation.execute(params, client);
+				return this.transferFungibleTokenOperation.execute(params, client);
 			default:
 				throw new Error(`Unsupported token operation: ${operation}`);
 		}
