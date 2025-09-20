@@ -6,6 +6,7 @@ import { CreateFungibleTokenOperation } from './CreateFungibleTokenOperation';
 import { CreateNFTOperation } from './CreateNFTOperation';
 import { MintNFTOperation } from './MintNFTOperation';
 import { MintFungibleTokenOperation } from './MintFungibleTokenOperation';
+import { TransferNFTOperation } from './TransferNFTOperation';
 
 export class TokenService implements IHederaService {
 	private airdropOperation = new AirdropOperation();
@@ -13,6 +14,7 @@ export class TokenService implements IHederaService {
 	private mintFungibleTokenOperation = new MintFungibleTokenOperation();
 	private createNFTOperation = new CreateNFTOperation();
 	private mintNFTOperation = new MintNFTOperation();
+	private transferNFTOperation = new TransferNFTOperation();
 
 	getProperties(): INodeProperties[] {
 		return [
@@ -48,6 +50,11 @@ export class TokenService implements IHederaService {
 						name: 'Mint NFT',
 						value: 'mintNFT',
 						description: 'Mint non-fungible token (NFT)',
+					},
+					{
+						name: 'Transfer NFT',
+						value: 'transferNFT',
+						description: 'Transfer an NFT from one account to another',
 					},
 				],
 				default: 'createFungibleToken',
@@ -178,7 +185,7 @@ export class TokenService implements IHederaService {
 				displayOptions: {
 					show: {
 						resource: ['token'],
-						tokenOperation: ['mintNFT', 'mintFungibleToken', 'airdrop'],
+						tokenOperation: ['mintNFT', 'mintFungibleToken', 'airdrop', 'transferNFT'],
 					},
 				},
 				default: '',
@@ -218,6 +225,54 @@ export class TokenService implements IHederaService {
 				default: 100,
 				description:
 					"Whole token amount to mint. The node will automatically convert this to the token's smallest units based on its decimals.",
+				required: true,
+			},
+			// Transfer NFT properties
+			{
+				displayName: 'Serial Number',
+				name: 'serialNumber',
+				type: 'number',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['transferNFT'],
+					},
+				},
+				typeOptions: {
+					minValue: 1,
+				},
+				default: 1,
+				description: 'The serial number of the NFT to transfer',
+				required: true,
+			},
+			{
+				displayName: 'From Account ID',
+				name: 'fromAccountId',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['transferNFT'],
+					},
+				},
+				default: '',
+				placeholder: '0.0.12345',
+				description: 'The account ID that currently owns the NFT',
+				required: true,
+			},
+			{
+				displayName: 'To Account ID',
+				name: 'toAccountId',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['transferNFT'],
+					},
+				},
+				default: '',
+				placeholder: '0.0.67890',
+				description: 'The account ID that will receive the NFT',
 				required: true,
 			},
 			// Airdrop properties
@@ -290,6 +345,12 @@ export class TokenService implements IHederaService {
 				params.tokenId = getNodeParameter('tokenId', itemIndex);
 				params.amount = getNodeParameter('amount', itemIndex);
 				break;
+			case 'transferNFT':
+				params.tokenId = getNodeParameter('tokenId', itemIndex);
+				params.serialNumber = getNodeParameter('serialNumber', itemIndex);
+				params.fromAccountId = getNodeParameter('fromAccountId', itemIndex);
+				params.toAccountId = getNodeParameter('toAccountId', itemIndex);
+				break;
 			case 'airdrop':
 				params.tokenId = getNodeParameter('tokenId', itemIndex);
 				params.recipientAccountId = getNodeParameter('recipientAccountId', itemIndex);
@@ -313,6 +374,8 @@ export class TokenService implements IHederaService {
 				return this.mintFungibleTokenOperation.execute(params, client);
 			case 'mintNFT':
 				return this.mintNFTOperation.execute(params, client);
+			case 'transferNFT':
+				return this.transferNFTOperation.execute(params, client);
 			case 'airdrop':
 				return this.airdropOperation.execute(params, client);
 			default:
