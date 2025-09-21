@@ -258,21 +258,6 @@ export class TokenService implements IHederaService {
 				required: true,
 			},
 			{
-				displayName: 'From Account ID',
-				name: 'fromAccountId',
-				type: 'string',
-				displayOptions: {
-					show: {
-						resource: ['token'],
-						tokenOperation: ['transferNFT'],
-					},
-				},
-				default: '',
-				placeholder: '0.0.12345',
-				description: 'The account ID that currently owns the NFT',
-				required: true,
-			},
-			{
 				displayName: 'To Account ID',
 				name: 'toAccountId',
 				type: 'string',
@@ -320,39 +305,6 @@ export class TokenService implements IHederaService {
 				description: 'The amount of tokens to transfer',
 				required: true,
 			},
-			{
-				displayName: 'Recipient Account ID',
-				name: 'recipientId',
-				type: 'string',
-				displayOptions: {
-					show: {
-						resource: ['token'],
-						tokenOperation: ['transfer'],
-					},
-				},
-				default: '',
-				placeholder: '0.0.12345',
-				description: 'Hedera Account ID to send HBAR to',
-				required: true,
-			},
-			{
-				displayName: 'Amount (HBAR)',
-				name: 'amount',
-				type: 'number',
-				displayOptions: {
-					show: {
-						resource: ['token'],
-						tokenOperation: ['transfer'],
-					},
-				},
-				typeOptions: {
-					minValue: 0,
-					numberPrecision: 8,
-				},
-				default: 0,
-				description: 'Amount of HBAR to transfer',
-				required: true,
-			},
 		];
 	}
 
@@ -396,12 +348,11 @@ export class TokenService implements IHederaService {
 				params.toAccountId = getNodeParameter('toAccountId', itemIndex);
 				params.senderAccountId = accountId;
 				break;
-			case 'transferNFT':
+			case 'transferFungibleToken':
 				params.tokenId = getNodeParameter('tokenId', itemIndex);
-				params.serialNumber = getNodeParameter('serialNumber', itemIndex);
-				params.toAccountId = getNodeParameter('toAccountId', itemIndex);
+				params.recipientAccountId = getNodeParameter('recipientAccountId', itemIndex);
+				params.airdropAmount = getNodeParameter('transferAmount', itemIndex);
 				params.senderAccountId = accountId;
-				break;
 				break;
 			case 'transfer':
 				params.recipientId = getNodeParameter('recipientId', itemIndex);
