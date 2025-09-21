@@ -180,7 +180,7 @@ export class TokenService implements IHederaService {
 				displayOptions: {
 					show: {
 						resource: ['token'],
-						tokenOperation: ['mintNFT', 'mintFungibleToken', 'airdrop'],
+						tokenOperation: ['mintNFT', 'mintFungibleToken', 'transferFungibleToken'],
 					},
 				},
 				default: '',
@@ -222,7 +222,7 @@ export class TokenService implements IHederaService {
 					"Whole token amount to mint. The node will automatically convert this to the token's smallest units based on its decimals.",
 				required: true,
 			},
-			// Airdrop properties
+			// transferFungibleToken properties
 			{
 				displayName: 'Recipient Account ID',
 				name: 'recipientAccountId',
@@ -230,29 +230,29 @@ export class TokenService implements IHederaService {
 				displayOptions: {
 					show: {
 						resource: ['token'],
-						tokenOperation: ['airdrop'],
+						tokenOperation: ['transferFungibleToken'],
 					},
 				},
 				default: '',
 				placeholder: '0.0.12345',
-				description: 'The account ID to receive the airdropped tokens',
+				description: 'The account ID to receive the fungible tokens',
 				required: true,
 			},
 			{
 				displayName: 'Amount',
-				name: 'airdropAmount',
+				name: 'transferAmount',
 				type: 'number',
 				displayOptions: {
 					show: {
 						resource: ['token'],
-						tokenOperation: ['airdrop'],
+						tokenOperation: ['transferFungibleToken'],
 					},
 				},
 				typeOptions: {
 					minValue: 0,
 				},
 				default: 100,
-				description: 'The amount of tokens to airdrop',
+				description: 'The amount of tokens to transfer',
 				required: true,
 			},
 			{
@@ -325,10 +325,10 @@ export class TokenService implements IHederaService {
 				params.tokenId = getNodeParameter('tokenId', itemIndex);
 				params.amount = getNodeParameter('amount', itemIndex);
 				break;
-			case 'airdrop':
+			case 'transferFungibleToken':
 				params.tokenId = getNodeParameter('tokenId', itemIndex);
 				params.recipientAccountId = getNodeParameter('recipientAccountId', itemIndex);
-				params.airdropAmount = getNodeParameter('airdropAmount', itemIndex);
+				params.transferFungibleToken = getNodeParameter('transferFungibleToken', itemIndex);
 				params.senderAccountId = accountId;
 				break;
 			case 'transfer':
@@ -353,8 +353,8 @@ export class TokenService implements IHederaService {
 				return this.mintFungibleTokenOperation.execute(params, client);
 			case 'mintNFT':
 				return this.mintNFTOperation.execute(params, client);
-			case 'airdrop':
-				return this.airdropOperation.execute(params, client);
+			case 'transferFungibleToken':
+				return this.transferFungibleTokenOperation.execute(params, client);
 			case 'transfer':
 				return this.transferOperation.execute(params, client);
 			default:
