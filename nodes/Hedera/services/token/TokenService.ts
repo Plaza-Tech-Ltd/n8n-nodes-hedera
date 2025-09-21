@@ -393,14 +393,15 @@ export class TokenService implements IHederaService {
 			case 'transferNFT':
 				params.tokenId = getNodeParameter('tokenId', itemIndex);
 				params.serialNumber = getNodeParameter('serialNumber', itemIndex);
-				params.fromAccountId = getNodeParameter('fromAccountId', itemIndex);
 				params.toAccountId = getNodeParameter('toAccountId', itemIndex);
-				break;
-			case 'transferFungibleToken':
-				params.tokenId = getNodeParameter('tokenId', itemIndex);
-				params.recipientAccountId = getNodeParameter('recipientAccountId', itemIndex);
-				params.airdropAmount = getNodeParameter('transferAmount', itemIndex);
 				params.senderAccountId = accountId;
+				break;
+			case 'transferNFT':
+				params.tokenId = getNodeParameter('tokenId', itemIndex);
+				params.serialNumber = getNodeParameter('serialNumber', itemIndex);
+				params.toAccountId = getNodeParameter('toAccountId', itemIndex);
+				params.senderAccountId = accountId;
+				break;
 				break;
 			case 'transfer':
 				params.recipientId = getNodeParameter('recipientId', itemIndex);

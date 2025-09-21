@@ -6,7 +6,7 @@ export class TransferNFTOperation implements IBaseOperation {
 	async execute(params: IDataObject, client: Client): Promise<IOperationResult> {
 		const tokenId = params.tokenId as string;
 		const serialNumber = params.serialNumber as number;
-		const fromAccountId = params.fromAccountId as string;
+		const fromAccountId = params.senderAccountId as string;
 		const toAccountId = params.toAccountId as string;
 
 		const nftId = new NftId(TokenId.fromString(tokenId), serialNumber);
