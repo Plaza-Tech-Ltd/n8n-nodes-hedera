@@ -1,7 +1,7 @@
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
 import { Client, Hbar, HbarUnit } from '@hashgraph/sdk';
-import { getMirrorConfigFromClient } from './MirrorConfig';
+import { getMirrorConfigFromClient } from './utils';
 
 export class AccountBalanceQueryOperation implements IBaseOperation {
 	async execute(params: IDataObject, client?: Client): Promise<IOperationResult> {
@@ -28,7 +28,6 @@ export class AccountBalanceQueryOperation implements IBaseOperation {
 		return {
 			accountId,
 			hbarBalance,
-			accountData: data,
 		};
 	}
 }

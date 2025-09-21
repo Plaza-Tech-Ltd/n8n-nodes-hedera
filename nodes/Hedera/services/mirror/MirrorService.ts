@@ -1,4 +1,3 @@
-// Updated MirrorService.ts
 import { Client } from '@hashgraph/sdk';
 import { IDataObject, INodeProperties } from 'n8n-workflow';
 import { IHederaService, IOperationResult } from '../../core/types';

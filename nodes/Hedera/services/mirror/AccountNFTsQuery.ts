@@ -1,7 +1,7 @@
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
 import { Client } from '@hashgraph/sdk';
-import { getMirrorConfigFromClient } from './MirrorConfig';
+import { getMirrorConfigFromClient } from './utils';
 
 export class AccountNFTsQueryOperation implements IBaseOperation {
 	async execute(params: IDataObject, client?: Client): Promise<IOperationResult> {
