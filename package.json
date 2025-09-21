@@ -1,19 +1,19 @@
 {
 	"name": "n8n-nodes-hedera",
-	"version": "0.2.3",
+	"version": "0.3.2",
 	"description": "Hedera node for n8n",
 	"keywords": [
 		"n8n-community-node-package"
 	],
 	"license": "MIT",
-	"homepage": "https://github.com/MilanWR/n8n-nodes-hedera",
+	"homepage": "https://github.com/Plaza-Tech-Ltd/n8n-nodes-hedera",
 	"author": {
-		"name": "Milan Wiercx van Rhijn",
-		"email": "hello@milanwr.com"
+		"name": "Plaza Tech Ltd",
+		"email": "hello@plazatech.io"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/MilanWR/n8n-nodes-hedera.git"
+		"url": "https://github.com/Plaza-Tech-Ltd/n8n-nodes-hedera.git"
 	},
 	"engines": {
 		"node": ">=20.15"
