@@ -1,20 +1,22 @@
 import { Client } from '@hashgraph/sdk';
 import { IDataObject, INodeProperties } from 'n8n-workflow';
 import { IHederaService, IOperationResult } from '../../core/types';
-import { AirdropOperation } from './AirdropOperation';
+import { TransferFungibleTokenOperation } from './TransferFungibleTokenOperation';
 import { CreateFungibleTokenOperation } from './CreateFungibleTokenOperation';
 import { CreateNFTOperation } from './CreateNFTOperation';
 import { MintNFTOperation } from './MintNFTOperation';
 import { MintFungibleTokenOperation } from './MintFungibleTokenOperation';
 import { TransferNFTOperation } from './TransferNFTOperation';
+import { TransferOperation } from './TransferOperation';
 
 export class TokenService implements IHederaService {
-	private airdropOperation = new AirdropOperation();
 	private createFungibleTokenOperation = new CreateFungibleTokenOperation();
 	private mintFungibleTokenOperation = new MintFungibleTokenOperation();
+	private transferFungibleTokenOperation = new TransferFungibleTokenOperation();
 	private createNFTOperation = new CreateNFTOperation();
 	private mintNFTOperation = new MintNFTOperation();
 	private transferNFTOperation = new TransferNFTOperation();
+	private transferOperation = new TransferOperation();
 
 	getProperties(): INodeProperties[] {
 		return [
@@ -26,11 +28,6 @@ export class TokenService implements IHederaService {
 					show: { resource: ['token'] },
 				},
 				options: [
-					{
-						name: 'Airdrop Token',
-						value: 'airdrop',
-						description: 'Airdrop tokens to multiple accounts',
-					},
 					{
 						name: 'Create Fungible Token',
 						value: 'createFungibleToken',
@@ -50,6 +47,11 @@ export class TokenService implements IHederaService {
 						name: 'Mint NFT',
 						value: 'mintNFT',
 						description: 'Mint non-fungible token (NFT)',
+					},
+					{
+						name: 'Transfer HBAR',
+						value: 'transfer',
+						description: 'Transfer HBAR to another account',
 					},
 					{
 						name: 'Transfer NFT',
@@ -185,7 +187,13 @@ export class TokenService implements IHederaService {
 				displayOptions: {
 					show: {
 						resource: ['token'],
-						tokenOperation: ['mintNFT', 'mintFungibleToken', 'airdrop', 'transferNFT'],
+						tokenOperation: [
+							'mintNFT',
+							'mintFungibleToken',
+							'airdrop',
+							'transferNFT',
+							'transferFungibleToken',
+						],
 					},
 				},
 				default: '',
@@ -276,6 +284,7 @@ export class TokenService implements IHederaService {
 				required: true,
 			},
 			// Airdrop properties
+			// transferFungibleToken properties
 			{
 				displayName: 'Recipient Account ID',
 				name: 'recipientAccountId',
@@ -283,29 +292,62 @@ export class TokenService implements IHederaService {
 				displayOptions: {
 					show: {
 						resource: ['token'],
-						tokenOperation: ['airdrop'],
+						tokenOperation: ['transferFungibleToken'],
 					},
 				},
 				default: '',
 				placeholder: '0.0.12345',
-				description: 'The account ID to receive the airdropped tokens',
+				description: 'The account ID to receive the fungible tokens',
 				required: true,
 			},
 			{
 				displayName: 'Amount',
-				name: 'airdropAmount',
+				name: 'transferAmount',
 				type: 'number',
 				displayOptions: {
 					show: {
 						resource: ['token'],
-						tokenOperation: ['airdrop'],
+						tokenOperation: ['transferFungibleToken'],
 					},
 				},
 				typeOptions: {
 					minValue: 0,
 				},
 				default: 100,
-				description: 'The amount of tokens to airdrop',
+				description: 'The amount of tokens to transfer',
+				required: true,
+			},
+			{
+				displayName: 'Recipient Account ID',
+				name: 'recipientId',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['transfer'],
+					},
+				},
+				default: '',
+				placeholder: '0.0.12345',
+				description: 'Hedera Account ID to send HBAR to',
+				required: true,
+			},
+			{
+				displayName: 'Amount (HBAR)',
+				name: 'amount',
+				type: 'number',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['transfer'],
+					},
+				},
+				typeOptions: {
+					minValue: 0,
+					numberPrecision: 8,
+				},
+				default: 0,
+				description: 'Amount of HBAR to transfer',
 				required: true,
 			},
 		];
@@ -352,9 +394,15 @@ export class TokenService implements IHederaService {
 				params.toAccountId = getNodeParameter('toAccountId', itemIndex);
 				break;
 			case 'airdrop':
+			case 'transferFungibleToken':
 				params.tokenId = getNodeParameter('tokenId', itemIndex);
 				params.recipientAccountId = getNodeParameter('recipientAccountId', itemIndex);
-				params.airdropAmount = getNodeParameter('airdropAmount', itemIndex);
+				params.transferFungibleToken = getNodeParameter('transferFungibleToken', itemIndex);
+				params.senderAccountId = accountId;
+				break;
+			case 'transfer':
+				params.recipientId = getNodeParameter('recipientId', itemIndex);
+				params.amount = getNodeParameter('amount', itemIndex);
 				params.senderAccountId = accountId;
 				break;
 			default:
@@ -377,7 +425,11 @@ export class TokenService implements IHederaService {
 			case 'transferNFT':
 				return this.transferNFTOperation.execute(params, client);
 			case 'airdrop':
-				return this.airdropOperation.execute(params, client);
+				return this.transferFungibleTokenOperation.execute(params, client);
+			case 'transferFungibleToken':
+				return this.transferFungibleTokenOperation.execute(params, client);
+			case 'transfer':
+				return this.transferOperation.execute(params, client);
 			default:
 				throw new Error(`Unsupported token operation: ${operation}`);
 		}

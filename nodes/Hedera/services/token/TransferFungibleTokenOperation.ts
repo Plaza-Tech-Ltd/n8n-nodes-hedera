@@ -3,7 +3,7 @@ import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
 import { TokenInfoQueryOperation } from '../mirror/TokenInfoQuery';
 
-export class AirdropOperation implements IBaseOperation {
+export class TransferFungibleTokenOperation implements IBaseOperation {
 	async execute(params: IDataObject, client: Client): Promise<IOperationResult> {
 		const tokenId = params.tokenId as string;
 		const recipientAccountId = params.recipientAccountId as string;

@@ -7,12 +7,12 @@ export class TransferOperation implements IBaseOperation {
 		const recipientId = params.recipientId as string;
 		const amount = params.amount as number;
 		const senderAccountId = params.senderAccountId as string;
-		
+
 		const hbarAmount = new Hbar(amount);
 
 		const txResponse = await new TransferTransaction()
 			.addHbarTransfer(senderAccountId, hbarAmount.negated()) // sender
-			.addHbarTransfer(recipientId, hbarAmount)                // recipient
+			.addHbarTransfer(recipientId, hbarAmount) // recipient
 			.execute(client);
 
 		const receipt = await txResponse.getReceipt(client);
