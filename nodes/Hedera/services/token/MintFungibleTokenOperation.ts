@@ -9,8 +9,10 @@ export class MintFungibleTokenOperation implements IBaseOperation {
 		const amount = params.amount as number;
 
 		const tokenInfoOp = new TokenInfoQueryOperation();
-		const tokenInfo = await tokenInfoOp.execute({ tokenId });
-		const decimals = (tokenInfo as IDataObject)?.decimals as number | undefined;
+		const tokenInfo = await tokenInfoOp.execute({ tokenId }, client);
+		const decimalsRaw = (tokenInfo as IDataObject)?.decimals;
+		const decimals = typeof decimalsRaw === 'string' ? parseInt(decimalsRaw, 10) : decimalsRaw;
+
 		if (typeof decimals !== 'number' || Number.isNaN(decimals)) {
 			throw new Error('Unable to fetch token decimals for minting.');
 		}
