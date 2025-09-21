@@ -6,11 +6,12 @@ export class CreateAccountOperation implements IBaseOperation {
 	async execute(params: IDataObject, client: Client): Promise<IOperationResult> {
 		const initialBalance = params.initialBalance as number;
 
-		const newPrivateKey = PrivateKey.generateED25519();
+		const newPrivateKey = PrivateKey.generateECDSA();
 		const newPublicKey = newPrivateKey.publicKey;
 
 		const txId = await new AccountCreateTransaction()
-			.setKey(newPublicKey)
+			.setECDSAKeyWithAlias(newPublicKey)
+			.setMaxAutomaticTokenAssociations(-1)
 			.setInitialBalance(new Hbar(initialBalance))
 			.execute(client);
 
