@@ -47,6 +47,11 @@ export class TokenService implements IHederaService {
 						description: 'Mint non-fungible token (NFT)',
 					},
 					{
+						name: 'Transfer Fungible Token',
+						value: 'transferFungibleToken',
+						description: 'Transfer fungible tokens from one account to another',
+					},
+					{
 						name: 'Transfer HBAR',
 						value: 'transfer',
 						description: 'Transfer HBAR to another account',
@@ -328,7 +333,7 @@ export class TokenService implements IHederaService {
 			case 'transferFungibleToken':
 				params.tokenId = getNodeParameter('tokenId', itemIndex);
 				params.recipientAccountId = getNodeParameter('recipientAccountId', itemIndex);
-				params.transferFungibleToken = getNodeParameter('transferFungibleToken', itemIndex);
+				params.airdropAmount = getNodeParameter('transferAmount', itemIndex);
 				params.senderAccountId = accountId;
 				break;
 			case 'transfer':
