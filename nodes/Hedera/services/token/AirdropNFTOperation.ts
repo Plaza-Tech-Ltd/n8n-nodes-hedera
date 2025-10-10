@@ -1,8 +1,8 @@
-import { TransferTransaction, Client, TokenId, NftId, AccountId } from '@hashgraph/sdk';
+import { Client, TokenId, NftId, AccountId, TokenAirdropTransaction } from '@hashgraph/sdk';
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
 
-export class TransferNFTOperation implements IBaseOperation {
+export class AirdropNFTOperation implements IBaseOperation {
 	async execute(params: IDataObject, client: Client): Promise<IOperationResult> {
 		const tokenId = params.tokenId as string;
 		const serialNumber = params.serialNumber as number;
@@ -11,7 +11,7 @@ export class TransferNFTOperation implements IBaseOperation {
 
 		const nftId = new NftId(TokenId.fromString(tokenId), serialNumber);
 
-		const transferTx = new TransferTransaction().addNftTransfer(
+		const transferTx = new TokenAirdropTransaction().addNftTransfer(
 			nftId,
 			AccountId.fromString(fromAccountId),
 			AccountId.fromString(toAccountId),

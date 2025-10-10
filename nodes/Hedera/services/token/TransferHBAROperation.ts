@@ -2,7 +2,7 @@ import { TransferTransaction, Hbar, Client } from '@hashgraph/sdk';
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
 
-export class TransferOperation implements IBaseOperation {
+export class TransferHBAROperation implements IBaseOperation {
 	async execute(params: IDataObject, client: Client): Promise<IOperationResult> {
 		const recipientId = params.recipientId as string;
 		const amount = params.amount as number;
