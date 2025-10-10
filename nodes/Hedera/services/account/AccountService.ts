@@ -2,11 +2,9 @@ import { Client } from '@hashgraph/sdk';
 import { IDataObject, INodeProperties } from 'n8n-workflow';
 import { IHederaService, IOperationResult } from '../../core/types';
 import { CreateAccountOperation } from './CreateAccountOperation';
-import { TransferOperation } from './TransferOperation';
 
 export class AccountService implements IHederaService {
 	private createAccountOperation = new CreateAccountOperation();
-	private transferOperation = new TransferOperation();
 
 	getProperties(): INodeProperties[] {
 		return [
@@ -19,45 +17,8 @@ export class AccountService implements IHederaService {
 				},
 				options: [
 					{ name: 'Create Account', value: 'create', description: 'Create a new Hedera account' },
-					{
-						name: 'Transfer HBAR',
-						value: 'transfer',
-						description: 'Transfer HBAR to another account',
-					},
 				],
 				default: 'create',
-			},
-			{
-				displayName: 'Recipient Account ID',
-				name: 'recipientId',
-				type: 'string',
-				displayOptions: {
-					show: {
-						resource: ['account'],
-						accountOperation: ['transfer'],
-					},
-				},
-				default: '',
-				description: 'Hedera Account ID to send HBAR to',
-				required: true,
-			},
-			{
-				displayName: 'Amount (HBAR)',
-				name: 'amount',
-				type: 'number',
-				displayOptions: {
-					show: {
-						resource: ['account'],
-						accountOperation: ['transfer'],
-					},
-				},
-				typeOptions: {
-					minValue: 0,
-					numberPrecision: 8,
-				},
-				default: 0,
-				description: 'Amount of HBAR to transfer',
-				required: true,
 			},
 			{
 				displayName: 'Initial Balance (HBAR)',
@@ -87,11 +48,6 @@ export class AccountService implements IHederaService {
 			case 'create':
 				params.initialBalance = getNodeParameter('initialBalance', itemIndex);
 				break;
-			case 'transfer':
-				params.recipientId = getNodeParameter('recipientId', itemIndex);
-				params.amount = getNodeParameter('amount', itemIndex);
-				params.senderAccountId = accountId;
-				break;
 			default:
 				throw new Error(`Unsupported account operation: ${operation}`);
 		}
@@ -103,8 +59,6 @@ export class AccountService implements IHederaService {
 		switch (operation) {
 			case 'create':
 				return this.createAccountOperation.execute(params, client);
-			case 'transfer':
-				return this.transferOperation.execute(params, client);
 			default:
 				throw new Error(`Unsupported account operation: ${operation}`);
 		}
