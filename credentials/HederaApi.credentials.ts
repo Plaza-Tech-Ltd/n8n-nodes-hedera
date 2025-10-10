@@ -29,6 +29,26 @@ export class HederaApi implements ICredentialType {
 			description: 'Your Hedera account private key (ED25519 or SECP256K1)',
 		},
 		{
+			displayName: 'Private Key Type',
+			name: 'keyType',
+			type: 'options',
+			options: [
+				{
+					name: 'ECDSA (secp256k1)',
+					value: 'ecdsa',
+					description: 'Use if your private key uses the secp256k1 curve',
+				},
+				{
+					name: 'ED25519',
+					value: 'ed25519',
+					description: 'Use if your private key uses the ed25519 curve',
+				},
+			],
+			default: 'ecdsa',
+			required: true,
+			description: 'Select the curve that matches your private key',
+		},
+		{
 			displayName: 'Network',
 			name: 'network',
 			type: 'options',

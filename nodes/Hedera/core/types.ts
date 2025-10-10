@@ -5,6 +5,7 @@ export interface IHederaCredentials {
 	accountId: string;
 	privateKey: string;
 	network: 'mainnet' | 'testnet' | 'previewnet';
+	keyType?: 'ecdsa' | 'ed25519';
 }
 
 export interface IOperationResult extends IDataObject {}
