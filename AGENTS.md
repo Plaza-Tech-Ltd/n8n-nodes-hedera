@@ -26,7 +26,7 @@ nodes/Hedera/
 │   ├── account/
 │   │   ├── AccountService.ts (implements IHederaService)
 │   │   ├── CreateAccountOperation.ts
-│   │   └── TransferOperation.ts
+│   │   └── TransferHBAROperation.ts
 │   ├── token/
 │   │   ├── TokenService.ts (implements IHederaService)
 │   │   ├── CreateTokenOperation.ts
