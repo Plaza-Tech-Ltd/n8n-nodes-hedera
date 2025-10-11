@@ -12,7 +12,7 @@ export class AirdropFungibleTokenOperation implements IBaseOperation {
 
 		const tokenInfoOp = new TokenInfoQueryOperation();
 		const tokenInfo = await tokenInfoOp.execute({ tokenId }, client);
-		const decimalsRaw = (tokenInfo as IDataObject)?.decimals;
+		const decimalsRaw = tokenInfo.decimals;
 		const decimals = typeof decimalsRaw === 'string' ? parseInt(decimalsRaw, 10) : decimalsRaw;
 
 		if (typeof decimals !== 'number' || Number.isNaN(decimals)) {

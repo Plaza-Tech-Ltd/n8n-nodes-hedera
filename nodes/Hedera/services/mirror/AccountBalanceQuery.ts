@@ -1,10 +1,19 @@
 import { IDataObject } from 'n8n-workflow';
-import { IBaseOperation, IOperationResult } from '../../core/types';
+import { IBaseOperation } from '../../core/types';
 import { Client, Hbar, HbarUnit } from '@hashgraph/sdk';
 import { getMirrorConfigFromClient } from './utils';
+import { paths } from '../../core/hedera-mirror';
+
+type MirrorAccountInfo =
+	paths['/api/v1/accounts/{idOrAliasOrEvmAddress}']['get']['responses'][200]['content']['application/json'];
+
+interface AccountBalanceResult extends IDataObject {
+	accountId: string;
+	hbarBalance: string;
+}
 
 export class AccountBalanceQueryOperation implements IBaseOperation {
-	async execute(params: IDataObject, client?: Client): Promise<IOperationResult> {
+	async execute(params: IDataObject, client?: Client): Promise<AccountBalanceResult> {
 		const accountId = String(params.accountId);
 		const { client: mirrorClient } = getMirrorConfigFromClient(client);
 
@@ -22,7 +31,9 @@ export class AccountBalanceQueryOperation implements IBaseOperation {
 			throw new Error('No data returned from mirror node');
 		}
 
-		const hbarBalanceTinybars = data.balance?.balance?.toString() || '0';
+		const accountData = data as MirrorAccountInfo;
+
+		const hbarBalanceTinybars = accountData.balance?.balance?.toString() ?? '0';
 		const hbarBalance = Hbar.fromTinybars(hbarBalanceTinybars).to(HbarUnit.Hbar).toString();
 
 		return {

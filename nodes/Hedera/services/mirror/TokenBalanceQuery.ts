@@ -1,10 +1,14 @@
 import { IDataObject } from 'n8n-workflow';
-import { IBaseOperation, IOperationResult } from '../../core/types';
+import { IBaseOperation } from '../../core/types';
 import { Client } from '@hashgraph/sdk';
 import { getMirrorConfigFromClient } from './utils';
+import { paths } from '../../core/hedera-mirror';
+
+type MirrorTokenBalances =
+	paths['/api/v1/tokens/{tokenId}/balances']['get']['responses'][200]['content']['application/json'];
 
 export class TokenBalanceQueryOperation implements IBaseOperation {
-	async execute(params: IDataObject, client?: Client): Promise<IOperationResult> {
+	async execute(params: IDataObject, client?: Client): Promise<MirrorTokenBalances> {
 		const tokenId = String(params.tokenId);
 		const { client: mirrorClient } = getMirrorConfigFromClient(client);
 
@@ -23,6 +27,6 @@ export class TokenBalanceQueryOperation implements IBaseOperation {
 			throw new Error('No data returned from mirror node');
 		}
 
-		return data;
+		return data as MirrorTokenBalances;
 	}
 }
