@@ -15,7 +15,7 @@ export class CreateFungibleTokenOperation implements IBaseOperation {
 			.setTokenName(tokenName)
 			.setTokenSymbol(tokenSymbol)
 			.setDecimals(tokenDecimals)
-			.setInitialSupply(initialSupply)
+			.setInitialSupply(initialSupply * Math.pow(10, tokenDecimals))
 			.setTreasuryAccountId(treasuryAccountId);
 
 		if (enableSupplyKey) {
