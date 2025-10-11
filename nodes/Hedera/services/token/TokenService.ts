@@ -300,6 +300,38 @@ export class TokenService implements IHederaService {
 				description: 'The amount of tokens to transfer',
 				required: true,
 			},
+			{
+				displayName: 'Recipient Account ID',
+				name: 'recipientId',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['transferHBAR'],
+					},
+				},
+				default: '',
+				placeholder: '0.0.12345',
+				description: 'The account ID that will receive the HBAR',
+				required: true,
+			},
+			{
+				displayName: 'Amount (HBAR)',
+				name: 'amount',
+				type: 'number',
+				displayOptions: {
+					show: {
+						resource: ['token'],
+						tokenOperation: ['transferHBAR'],
+					},
+				},
+				typeOptions: {
+					minValue: 0,
+				},
+				default: 1,
+				description: 'The amount of HBAR to transfer',
+				required: true,
+			},
 		];
 	}
 

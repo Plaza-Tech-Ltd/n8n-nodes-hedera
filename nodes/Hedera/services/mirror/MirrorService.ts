@@ -130,8 +130,7 @@ export class MirrorService implements IHederaService {
 				description: 'The Hedera account ID to get tokens for',
 				required: true,
 			},
-
-			// Token ID for token balance query
+			// Account and token IDs for token balance query
 			{
 				displayName: 'Token ID',
 				name: 'tokenBalanceTokenId',
@@ -146,6 +145,20 @@ export class MirrorService implements IHederaService {
 				placeholder: '0.0.12345',
 				description: 'The Hedera token ID to check balance for',
 				required: true,
+			},
+			{
+				displayName: 'Account ID (optional)',
+				name: 'tokenBalanceAccountId',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['mirror'],
+						mirrorOperation: ['tokenBalance'],
+					},
+				},
+				default: '',
+				placeholder: '0.0.67890',
+				description: 'Optional Hedera account ID to filter the token balance for a specific holder',
 			},
 			// Topic ID for messages query
 			{
@@ -235,9 +248,18 @@ export class MirrorService implements IHederaService {
 			case 'accountTokens':
 				params.accountId = getNodeParameter('tokensAccountId', itemIndex);
 				break;
-			case 'tokenBalance':
+			case 'tokenBalance': {
 				params.tokenId = getNodeParameter('tokenBalanceTokenId', itemIndex);
+				const tokenBalanceAccountId = getNodeParameter(
+					'tokenBalanceAccountId',
+					itemIndex,
+					'',
+				) as string;
+				if (tokenBalanceAccountId) {
+					params.accountId = tokenBalanceAccountId;
+				}
 				break;
+			}
 			case 'topicMessages':
 				params.topicId = getNodeParameter('topicId', itemIndex);
 				params.limit = getNodeParameter('messageLimit', itemIndex);
