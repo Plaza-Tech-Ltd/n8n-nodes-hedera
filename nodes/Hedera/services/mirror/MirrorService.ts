@@ -147,7 +147,7 @@ export class MirrorService implements IHederaService {
 				required: true,
 			},
 			{
-				displayName: 'Account ID (optional)',
+				displayName: 'Account ID (Optional)',
 				name: 'tokenBalanceAccountId',
 				type: 'string',
 				displayOptions: {
