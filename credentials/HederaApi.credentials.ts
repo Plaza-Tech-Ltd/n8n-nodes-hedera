@@ -1,7 +1,4 @@
-import {
-	ICredentialType,
-	INodeProperties,
-} from 'n8n-workflow';
+import { ICredentialType, INodeProperties } from 'n8n-workflow';
 
 export class HederaApi implements ICredentialType {
 	name = 'hederaApi';
@@ -71,4 +68,4 @@ export class HederaApi implements ICredentialType {
 			description: 'Hedera network to connect to',
 		},
 	];
-} 
+}
