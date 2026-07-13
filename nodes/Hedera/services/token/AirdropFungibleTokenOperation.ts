@@ -1,4 +1,4 @@
-import { TokenAirdropTransaction, Client } from '@hashgraph/sdk';
+import { TokenAirdropTransaction, Client } from '@hiero-ledger/sdk';
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
 import { TokenInfoQueryOperation } from '../mirror/TokenInfoQuery';
