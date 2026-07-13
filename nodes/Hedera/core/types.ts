@@ -1,5 +1,5 @@
 import { IDataObject, INodeProperties } from 'n8n-workflow';
-import { Client } from '@hashgraph/sdk';
+import { Client } from '@hiero-ledger/sdk';
 
 export interface IHederaCredentials {
 	accountId: string;

@@ -1,4 +1,4 @@
-import { AccountCreateTransaction, PrivateKey, Hbar, Client } from '@hashgraph/sdk';
+import { AccountCreateTransaction, PrivateKey, Hbar, Client } from '@hiero-ledger/sdk';
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
 

@@ -1,4 +1,4 @@
-import { Client, TokenId, NftId, AccountId, TokenAirdropTransaction } from '@hashgraph/sdk';
+import { Client, TokenId, NftId, AccountId, TokenAirdropTransaction } from '@hiero-ledger/sdk';
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
 

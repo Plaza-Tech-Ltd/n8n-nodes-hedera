@@ -1,6 +1,6 @@
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
-import { Client } from '@hashgraph/sdk';
+import { Client } from '@hiero-ledger/sdk';
 import { getMirrorConfigFromClient } from './utils';
 
 export class TokenBalanceQueryOperation implements IBaseOperation {

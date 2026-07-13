@@ -1,6 +1,6 @@
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
-import { Client, Hbar, HbarUnit } from '@hashgraph/sdk';
+import { Client, Hbar, HbarUnit } from '@hiero-ledger/sdk';
 import { getMirrorConfigFromClient } from './utils';
 
 export class AccountBalanceQueryOperation implements IBaseOperation {

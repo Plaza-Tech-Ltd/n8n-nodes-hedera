@@ -1,5 +1,5 @@
 import createClient from 'openapi-fetch';
-import { Client, LedgerId } from '@hashgraph/sdk';
+import { Client, LedgerId } from '@hiero-ledger/sdk';
 import type { paths } from '../../core/hedera-mirror';
 
 export const getMirrorConfigFromClient = (client?: Client) => {

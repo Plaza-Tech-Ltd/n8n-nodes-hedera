@@ -1,4 +1,4 @@
-import { Client, PrivateKey } from '@hashgraph/sdk';
+import { Client, PrivateKey } from '@hiero-ledger/sdk';
 import { IHederaCredentials } from './types';
 
 export class HederaClientFactory {

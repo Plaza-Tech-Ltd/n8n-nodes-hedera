@@ -1,4 +1,4 @@
-import { TokenCreateTransaction, Client, PublicKey } from '@hashgraph/sdk';
+import { TokenCreateTransaction, Client, PublicKey } from '@hiero-ledger/sdk';
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
 

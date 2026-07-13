@@ -1,4 +1,4 @@
-import { TokenMintTransaction, Client, TokenId } from '@hashgraph/sdk';
+import { TokenMintTransaction, Client, TokenId } from '@hiero-ledger/sdk';
 import { IDataObject } from 'n8n-workflow';
 import { IBaseOperation, IOperationResult } from '../../core/types';
 
